@@ -1,7 +1,9 @@
 class Boardspace:
 
-    occupied = False
-    attacked = False
+    occupied, attacked = (False, False)
+
+    def __init__(self):
+        pass
 
     def occupy(self):
         occupied = True
@@ -16,13 +18,12 @@ class Boardspace:
         occupy = False
 
     def revertAll(self):
-        attacked = False
-        occupied = False
+        occupied, attacked = (False, False)
 
-    def getAtkState(self):
+    def isAttacked(self):
         return attacked
     
-    def getOccupiedState(self):
+    def isOccupied(self):
         return occupied
 
 
