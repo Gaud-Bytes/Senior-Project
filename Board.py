@@ -5,12 +5,12 @@ class Board:
     _board = [[0] * _rows] * _cols
 
     def __init__(self):
-        for x in range(self._rows):
-            for y in range(self._cols):
+        for x in range(len(self._board)):
+            for y in range(len(self._board[x])):
                 self._board[x][y] = bs()
-                self._board[x][y].setCoords([x], [y])
+                self._board[x][y].setCoords(x, y)
 
-    
+                
     def getSpace(self, row, col):
         return self._board[row][col]
 

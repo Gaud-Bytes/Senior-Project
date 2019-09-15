@@ -32,7 +32,3 @@ class Boardspace:
 
     def getCoords(self):
         return self._coords
-
-
-
-
