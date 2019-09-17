@@ -1,12 +1,14 @@
 from Boardspace import Boardspace as bs
-
 class Board:
-    _rows, _cols = (10, 10)
-    _board = [[0] * _rows] * _cols
-
     def __init__(self):
-        for x in range(len(self._board)):
-            for y in range(len(self._board[x])):
+        self._rows, self._cols = (10, 10)
+        self._board = []
+
+        for x in range(self._rows):
+            self._board.append([0,0,0,0,0,0,0,0,0,0])
+        
+        for x in range(self._rows):
+            for y in range(self._cols):
                 self._board[x][y] = bs()
                 self._board[x][y].setCoords(x, y)
 

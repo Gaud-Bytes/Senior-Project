@@ -1,10 +1,8 @@
 class Boardspace:
 
-    _occupied, _attacked = (False, False)
-    _coords = ()
-
     def __init__(self):
-        pass
+        self._occupied, _attacked = (False, False)
+        self._coords = ()
 
     def occupy(self):
         self._occupied = True
@@ -14,6 +12,7 @@ class Boardspace:
 
     def setCoords(self, x, y):
         self._coords = (x, y)
+
 
     def revertAttack(self):
         self._attacked = False
@@ -31,4 +30,4 @@ class Boardspace:
         return self._occupied
 
     def getCoords(self):
-        return self._coords
+       return self._coords

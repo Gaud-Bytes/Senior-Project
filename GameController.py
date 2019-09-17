@@ -3,11 +3,9 @@ from GameView import GameView as gv
 
 class GameController:
 
-    _model = gm()
-    _view = gv()    
-
     def __init__(self):
-        pass
+        self._model = gm()
+        self._view = gv()
 
     
     def updateView(self):
