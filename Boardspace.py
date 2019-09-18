@@ -1,7 +1,7 @@
 class Boardspace:
 
     def __init__(self):
-        self._occupied, _attacked = (False, False)
+        self._occupied, self._attacked = (False, False)
         self._coords = ()
 
     def occupy(self):
