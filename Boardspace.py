@@ -31,3 +31,9 @@ class Boardspace:
 
     def getCoords(self):
        return self._coords
+    
+    def getTag(self):
+        return str(self._coords)
+
+    
+
