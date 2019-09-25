@@ -16,42 +16,55 @@ class GameView:
 
 
 
-    def displayBoards(self, pl, ai):
-        x1, y1, x2, y2 = (10, 10, 45, 45)
+    def displayBoards(self, pl, ai, pturn):
+        x1, y1, x2, y2 = (180, 10, 224, 54)
+        yDiff = y2 - y1 + 1
+        xDiff = x2 - x1 + 1
+        space = NONE
 
         self._w.delete(ALL)
-        for i in range(ai.getRows()):
-            y1 = 10
-            y2 = 45
-            for j in range(ai.getCols()):
-                if(ai.getSpace(i,j).isAttacked() and ai.getSpace(i,j).isOccupied()):
-                    self._w.create_rectangle(x1, y1, x2, y2, fill="#B22222")
-                elif(ai.getSpace(i,j).isAttacked() and not ai.getSpace(i,j).isOccupied()):
-                    self._w.create_rectangle(x1, y1, x2, y2, fill="#FFFFFF")
-                else:
-                    self._w.create_rectangle(x1, y1, x2, y2, fill="#228B22")
 
-                y1+=35
-                y2+=35
-            x1+=35
-            x2+=35
+        if not pturn:
+            for i in range(ai.getRows()):
+                y1 = 10
+                y2 = 54
+                yDiff = y2 - y1 + 1
+                for j in range(ai.getCols()):
+                    if(ai.getSpace(i,j).isAttacked() and ai.getSpace(i,j).isOccupied()):
+                        space = self._w.create_rectangle(x1, y1, x2, y2, fill="#B22222", width=1)
+                    elif(ai.getSpace(i,j).isAttacked() and not ai.getSpace(i,j).isOccupied()):
+                        space =self._w.create_rectangle(x1, y1, x2, y2, fill="#FFFFFF", width=1)
+                    else:
+                        space = self._w.create_rectangle(x1, y1, x2, y2, fill="#228B22", width=1)
 
-        for i in range(pl.getRows()):
-            y1 = 10
-            y2 = 45
-            for j in range(pl.getCols()):
-                if(pl.getSpace(i,j).isAttacked() and pl.getSpace(i,j).isOccupied()):
-                    self._w.create_rectangle(x1, y1, x2, y2, fill="#B22222")
-                elif(pl.getSpace(i,j).isAttacked() and not pl.getSpace(i,j).isOccupied()):
-                    self._w.create_rectangle(x1, y1, x2, y2, fill="#FFFFFF")
-                elif(not pl.getSpace(i,j).isAttacked() and pl.getSpace(i,j).isOccupied()):
-                    self._w.create_rectangle(x1, y1, x2, y2, fill="#000000")
-                else:
-                    self._w.create_rectangle(x1, y1, x2, y2, fill="#00FFFF")
-                
-                y1+=35
-                y2+=35
-            x1+=35
-            x2+=35
+                    if(ai.getSpace(i,j).isSelected()):
+                        self._w.itemconfig(space, outline="#FF6347", width=3)
+
+                    y1+=yDiff
+                    y2+=yDiff
+                x1+=xDiff
+                x2+=xDiff
+        else:
+            for i in range(pl.getRows()):
+                y1 = 10
+                y2 = 54
+                yDiff = y2 - y1 + 1
+                for j in range(pl.getCols()):
+                    if(pl.getSpace(i,j).isAttacked() and pl.getSpace(i,j).isOccupied()):
+                        space = self._w.create_rectangle(x1, y1, x2, y2, fill="#B22222", width=1)
+                    elif(pl.getSpace(i,j).isAttacked() and not pl.getSpace(i,j).isOccupied()):
+                       space = self._w.create_rectangle(x1, y1, x2, y2, fill="#FFFFFF", width=1)
+                    elif(not pl.getSpace(i,j).isAttacked() and pl.getSpace(i,j).isOccupied()):
+                        space = self._w.create_rectangle(x1, y1, x2, y2, fill="#000000", width=1)
+                    else:
+                       space = self._w.create_rectangle(x1, y1, x2, y2, fill="#00FFFF", width=1)
+
+                    if(pl.getSpace(i,j).isSelected()):
+                        self._w.itemconfig(space, outline="red", width=5)
+                    
+                    y1+=yDiff
+                    y2+=yDiff
+                x1+=xDiff
+                x2+=xDiff
 
 

@@ -13,32 +13,43 @@ class GameController:
     def clickSpace(self, event):
         
         coords = self.pixToGridCoord(event.x, event.y)
+        
+        if(self._model.getTurn() and not coords == (-1, -1)):
+            self._model.getPlayerBoard().getSpace(coords[0], coords[1]).toggleSelect()
+        elif(not self._model.getTurn() and not coords == (-1, -1)):
+            self._model.getAIBoard().getSpace(coords[0], coords[1]).toggleSelect()
 
         print(coords)
 
         self.updateView()
 
     def pixToGridCoord(self, xPix, yPix):
-        x1, y1, x2, y2 = (10, 10, 45, 45)
-        xCoord, yCoord = (0, 0)
-        for i in range(self._model.getPlayerBoard().getRows() * 2):
-            y1, y2 = (10, 45)
-            if(xPix > x1 and xPix < x2):
-                    xCoord = i % 10
-            for j in range(self._model.getPlayerBoard().getCols()):
-                if (yPix > y1 and yPix < y2):
-                    yCoord = j % 10
-                
-                y1 += 35
-                y2 += 35
+        x1, y1, x2, y2 = (180, 10, 225, 55)
+        xCoord, yCoord = (-1, -1)
+        yDiff = y2 - y1
+        xDiff = x2 - x1
+        yMax = yDiff * self._model.getPlayerBoard().getRows() + y2
+        xMax = xDiff * self._model.getPlayerBoard().getCols() + x2
 
-            x1 += 35
-            x2 += 35
+        if(xPix > x1 and xPix < xMax) and (yPix > y1 and yPix < yMax ):
+            for i in range(self._model.getPlayerBoard().getRows()):
+                y1, y2 = (10, 55)
+                if(xPix > x1 and xPix < x2):
+                        xCoord = i
+                for j in range(self._model.getPlayerBoard().getCols()):
+                    if (yPix > y1 and yPix < y2):
+                        yCoord = j
+                    
+                    y1 += yDiff
+                    y2 += yDiff
+
+                x1 += xDiff
+                x2 += xDiff
 
         return (xCoord, yCoord)
-    
+        
     def updateView(self):
-        self._view.displayBoards(self._model.getPlayerBoard(), self._model.getAIBoard())
+        self._view.displayBoards(self._model.getPlayerBoard(), self._model.getAIBoard(), self._model.getTurn())
         self._view.getCanvasWidget().bind("<Button-1>", self.clickSpace)
 
 gc = GameController()

@@ -11,7 +11,7 @@ class Board:
         for x in range(self._rows):
             for y in range(self._cols):
                 self._board[x][y] = bs()
-                self._board[x][y].setCoords(x, y)
+                #self._board[x][y].setCoords(x, y)
 
                 
     def getSpace(self, row, col):

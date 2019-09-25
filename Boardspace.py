@@ -1,8 +1,8 @@
 class Boardspace:
 
     def __init__(self):
-        self._occupied, self._attacked = (False, False)
-        self._coords = ()
+        self._occupied, self._attacked, self._selected = (False, False, False)
+        #self._coords = ()
 
     def occupy(self):
         self._occupied = True
@@ -10,8 +10,13 @@ class Boardspace:
     def attack(self):
         self._attacked = True
 
-    def setCoords(self, x, y):
-        self._coords = (x, y)
+   # def setCoords(self, x, y):
+        #self._coords = (x, y)
+    def toggleSelect(self):
+        if not self._selected:
+            self._selected = True
+        else:
+            self._selected = False
 
 
     def revertAttack(self):
@@ -21,7 +26,7 @@ class Boardspace:
         self._occupy = False
 
     def revertAll(self):
-        self._occupied, self._attacked = (False, False)
+        self._occupied, self._attacked, self._selected = (False, False, False)
 
     def isAttacked(self):
         return self._attacked
@@ -29,8 +34,11 @@ class Boardspace:
     def isOccupied(self):
         return self._occupied
 
-    def getCoords(self):
-       return self._coords
+    def isSelected(self):
+        return self._selected
+
+    #def getCoords(self):
+       #return self._coords
 
 
     
