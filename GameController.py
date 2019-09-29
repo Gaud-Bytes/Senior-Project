@@ -14,9 +14,9 @@ class GameController:
         
         coords = self.pixToGridCoord(event.x, event.y)
         
-        if(self._model.getTurn() and not coords == (-1, -1)):
+        if(self._model.playerTurn() and not coords == (-1, -1)):
             self._model.getPlayerBoard().getSpace(coords[0], coords[1]).toggleSelect()
-        elif(not self._model.getTurn() and not coords == (-1, -1)):
+        elif(not self._model.playerTurn() and not coords == (-1, -1)):
             self._model.getAIBoard().getSpace(coords[0], coords[1]).toggleSelect()
 
         print(coords)
@@ -49,8 +49,10 @@ class GameController:
         return (xCoord, yCoord)
         
     def updateView(self):
-        self._view.displayBoards(self._model.getPlayerBoard(), self._model.getAIBoard(), self._model.getTurn())
+        self._view.displayBoards(self._model.getPlayerBoard(), self._model.getAIBoard(), self._model.playerTurn())
         self._view.getCanvasWidget().bind("<Button-1>", self.clickSpace)
+
+        self._view.displayButtons(self._model.getPlayerBoard())
 
 gc = GameController()
 

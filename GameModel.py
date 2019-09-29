@@ -12,7 +12,7 @@ class GameModel:
     def getAIBoard(self):
         return self._aiBoard
 
-    def getTurn(self):
+    def playerTurn(self):
         return self._playersTurn
 
     def turnChange(self):
