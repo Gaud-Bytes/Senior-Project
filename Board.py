@@ -1,8 +1,8 @@
 from Boardspace import Boardspace as bs
 class Board:
-    def __init__(self, owner):
+    def __init__(self):
         self._rows, self._cols = (10, 10)
-        self._owner = str(owner)
+       # self._owner = str(owner)
         self._board = []
 
         for x in range(self._rows):
@@ -17,8 +17,8 @@ class Board:
     def getSpace(self, row, col):
         return self._board[row][col]
 
-    def getOwner(self):
-        return self._owner
+    #def getOwner(self):
+       # return self._owner
 
     def getRows(self):
         return self._rows

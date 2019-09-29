@@ -28,6 +28,10 @@ class GameView:
         pass
 
     def displayBoards(self, pl, ai, pturn):
+
+        if(not isinstance(pl, Board) and not isinstance(ai, Board) and not isinstance(pturn, bool)):
+            return False
+
         x1, y1, x2, y2 = (180, 10, 224, 54)
         yDiff = y2 - y1 + 1
         xDiff = x2 - x1 + 1

@@ -3,7 +3,7 @@ class Ship:
 
     def __init__(self, name, size):
         
-        if(isinstance(name), str):
+        if(isinstance(name, str)):
             self._shipName = name
         else:
             self._shipName = "Patrol Boat"

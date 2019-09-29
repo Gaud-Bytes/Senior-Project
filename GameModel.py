@@ -1,16 +1,18 @@
-from Board import Board
+from Player import Player
+from HumanPlayer import HumanPlayer as hp
+from AI import AI
 
 class GameModel:
     
     def __init__(self):
-        self._playerBoard, self._aiBoard = (Board("Player"), Board("AI"))
+        self._hPlayer, self._ai = (hp(), AI())
         self._playersTurn = True
 
     def getPlayerBoard(self):
-        return self._playerBoard
+        return self._hPlayer.getBoard()
 
     def getAIBoard(self):
-        return self._aiBoard
+        return self._ai.getBoard()
 
     def playerTurn(self):
         return self._playersTurn
