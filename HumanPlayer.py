@@ -1,4 +1,5 @@
 from Player import Player
+from Ship import Ship
 from PlayerStrategy import *
 
 class HumanPlayer(Player):
@@ -9,6 +10,6 @@ class HumanPlayer(Player):
     def attack(self, player, coords):
         self._strategy.attack(player, coords)
 
-    def placeShip(self, startCoords, endCoords):
-        self._strategy.placeShip(startCoords, endCoords)
+    def placeShip(self, ship, startCoords, endCoords):
+        self._strategy.placeShip(self, ship, startCoords, endCoords)
         
