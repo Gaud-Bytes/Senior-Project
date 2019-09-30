@@ -22,8 +22,8 @@ class Player(ABC):
     def placeShip(self):
         pass
 
-    def getShip(self, index):
-        return self._ships[index]
+    def getShips(self):
+        return self._ships
 
     def lenShips(self):
         return len(self._ships)

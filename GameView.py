@@ -10,23 +10,63 @@ class GameView:
         self._boardXmin, self._boardyMin, self._boardXmax, self._boardYmax =  (0, 0, 0, 0)
         self._master = master
         self._master.title("BattleBot AI Game")
-        self._w = Canvas(self._master, width=self._canvas_width, height=self._canvas_height )
+        self._w = Canvas(self._master, width=self._canvas_width, height=self._canvas_height, bg='#000000' )
         self._w.pack()
+        self._buttons = []
+        self._shipList = []
 
     def getCanvasWidget(self):
         return self._w
 
 
-    def displayButtons(self, pl):
-        button1 = Button(self._w, text="Quit", anchor=W)
-        button1.configure(width =10, bg='#800000', fg="#FFFFFF")
-        button_window = self._w.create_window(150, 500, anchor=S, window = button1)
+    def displayButtons(self, plShips):
+        buttonX = 150
 
-    def displayAIShipList(self, ai):
-        pass
+        quitB = Button(self._w, text="Quit", anchor=W)
+        quitB.configure(width =10, bg='#800000', fg="#FFFFFF")
+        quitB_window = self._w.create_window(buttonX, 500, anchor=S, window = quitB)
 
-    def displayPlayerShipList(self, pl):
-        pass
+        confirm = Button(self._w, text="Confrim", anchor=W)
+        confirm.configure(width=10, bg='#D4AF37')
+        confirm_window = self._w.create_window(350, 600, anchor=S, window=confirm)
+
+        undo = Button(self._w, text="Undo", anchor=W)
+        undo.configure(width=10, bg='#E0115F')
+        undo_window = self._w.create_window(450, 600, anchor=S, window=undo)
+
+        self._buttons.append(quitB)
+        self._buttons.append(confirm)
+        self._buttons.append(undo)
+
+        for x in range(len(plShips)):
+            buttonX += 100
+
+            if not plShips[x].isSunk():
+                shipButton = Button(self._w, text=plShips[x].getName(), anchor=W)
+                shipButton.configure(width=10, bg='#ADD8E6', fg="#000000")
+                shipButton_window = self._w.create_window(buttonX, 500, anchor=S, window=shipButton)
+                self._buttons.append(shipButton)
+
+    def getButtons(self):
+        return self._buttons
+
+    def displayAIShipList(self, aiShips):
+        labelX = 150
+
+        title = Label(self._w, text="AI Ships:", anchor=W )
+        title.configure(width=10, font=("Helvetica", 12))
+        title_window = self._w.create_window(labelX, 550, anchor=S, window=title)
+
+        self._shipList.append(title)
+
+        for x in range(len(aiShips)):
+            labelX += 100
+            if not aiShips[x].isSunk():
+                shipLabel = Label(self._w, text=aiShips[x].getName(), anchor=W )
+                shipLabel.configure(width=10, font=("Helvetica bold", 12))
+                shipLabel_window = self._w.create_window(labelX, 550, anchor=S, window=shipLabel)
+            
+                self._shipList.append(shipLabel)
 
     def displayBoards(self, model):
 

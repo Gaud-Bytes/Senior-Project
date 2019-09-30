@@ -19,7 +19,7 @@ class GameController:
         
         if(self._model.yourTurn() and not self._model.isShipPlacementPhase()):
             self._model.getAIBoard().getSpace(coords[0], coords[1]).toggleSelect()
-        else:
+        elif(self._model.isShipPlacementPhase()):
             self._model.getPlayerBoard().getSpace(coords[0], coords[1]).toggleSelect()
 
         print(coords)
@@ -55,7 +55,8 @@ class GameController:
         self._view.displayBoards(self._model)
         self._view.getCanvasWidget().bind("<Button-1>", self.clickSpace)
 
-        self._view.displayButtons(self._model.getPlayerBoard())
+        self._view.displayButtons(self._model.getPlayerShips())
+        self._view.displayAIShipList(self._model.getAIShips())
 
 gc = GameController()
 

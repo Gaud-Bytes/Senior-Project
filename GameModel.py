@@ -16,6 +16,12 @@ class GameModel:
     def getAIBoard(self):
         return self._ai.getBoard()
 
+    def getPlayerShips(self):
+        return self._hPlayer.getShips()
+
+    def getAIShips(self):
+        return self._ai.getShips()
+
     def yourTurn(self):
         return self._yourTurn
 
