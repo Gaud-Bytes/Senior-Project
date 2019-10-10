@@ -1,4 +1,5 @@
 from Player import Player
+from Ship import Ship
 from HumanPlayer import HumanPlayer as hp
 from AI import AI
 
@@ -9,6 +10,8 @@ class GameModel:
         self._gameEnd = False
         self._shipPlacementPhase = True
         self._yourTurn = True
+        self._activeShip = None
+        self._activeShipIndex = None
 
     def getPlayerBoard(self):
         return self._hPlayer.getBoard()
@@ -42,3 +45,16 @@ class GameModel:
 
     def isGameOver(self):
         return self._gameEnd
+
+    def setActiveShip(self, ship, index):
+        self._activeShip = ship
+        self._activeShipIndex = index
+
+    def getActiveShip(self):
+        return self._activeShip
+
+    def getActiveShipIndex(self):
+        return self._activeShipIndex
+
+    def getPlayer(self):
+        return self._hPlayer

@@ -25,6 +25,7 @@ class GameView:
         quitB = Button(self._w, text="Quit", anchor=W)
         quitB.configure(width =10, bg='#800000', fg="#FFFFFF")
         quitB_window = self._w.create_window(buttonX, 500, anchor=S, window = quitB)
+    
 
         confirm = Button(self._w, text="Confrim", anchor=W)
         confirm.configure(width=10, bg='#D4AF37')
@@ -53,7 +54,7 @@ class GameView:
     def displayAIShipList(self, aiShips):
         labelX = 150
 
-        title = Label(self._w, text="AI Ships:", anchor=W )
+        title = Label(self._w, text="AI Ships:", anchor=W, bg='#AAA9AD' )
         title.configure(width=10, font=("Helvetica", 12))
         title_window = self._w.create_window(labelX, 550, anchor=S, window=title)
 
@@ -62,7 +63,7 @@ class GameView:
         for x in range(len(aiShips)):
             labelX += 100
             if not aiShips[x].isSunk():
-                shipLabel = Label(self._w, text=aiShips[x].getName(), anchor=W )
+                shipLabel = Label(self._w, text=aiShips[x].getName(), anchor=W, bg='#AAA9AD' )
                 shipLabel.configure(width=10, font=("Helvetica bold", 12))
                 shipLabel_window = self._w.create_window(labelX, 550, anchor=S, window=shipLabel)
             
@@ -115,7 +116,7 @@ class GameView:
                     elif(model.getPlayerBoard().getSpace(i,j).isAttacked() and not model.getPlayerBoard().getSpace(i,j).isOccupied()):
                        space = self._w.create_rectangle(x1, y1, x2, y2, fill="#FFFFFF", width=1)
                     elif(not model.getPlayerBoard().getSpace(i,j).isAttacked() and model.getPlayerBoard().getSpace(i,j).isOccupied()):
-                        space = self._w.create_rectangle(x1, y1, x2, y2, fill="#000000", width=1)
+                        space = self._w.create_rectangle(x1, y1, x2, y2, fill="#AAA9AD", width=1)
                     else:
                        space = self._w.create_rectangle(x1, y1, x2, y2, fill="#00FFFF", width=1)
 
