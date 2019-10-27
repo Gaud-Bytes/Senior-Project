@@ -22,11 +22,11 @@ class HumanStrategy(PlayerStrategy):
     def attack(self, player, coords):
         player.getBoard().getSpace(coords[0], coords[1]).attack()
 
-    def placeShip(self, player, ship, startCoords, endCoords):
-        ship.setStart(startCoords)
-        ship.setEnd(endCoords)
+    def placeShip(self, player, ship):
+        print(str(ship.getName()))
 
-        for x in range(ship.getSize()):
+        print(len(ship.getSpaces()))
+        for x in range(len(ship.getSpaces())):
             coords = ship.getSpaces()[x]
             player.getBoard().getSpace(coords[0], coords[1]).occupy()
 

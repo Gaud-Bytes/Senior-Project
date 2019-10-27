@@ -78,7 +78,7 @@ class GameView:
                         self._w.itemconfig(self._boardSpaces[i][j], fill="#B22222", width=1)
                     elif(self._model.getPlayerBoard().getSpace(i,j).isAttacked() and not self._model.getPlayerBoard().getSpace(i,j).isOccupied()):
                         self._w.itemconfig(self._boardSpaces[i][j], fill="#FFFFFF", width=1)
-                    elif(self._model.getPlayerBoard().getSpace(i, j).isOccupied() and not self._model.getPlayerBoard.getSpace(i,j).isAttacked()):
+                    elif(self._model.getPlayerBoard().getSpace(i, j).isOccupied() and not self._model.getPlayerBoard().getSpace(i,j).isAttacked()):
                         self._w.itemconfig(self._boardSpaces[i][j], fill="#AAA9AD", width=1)
                     else:
                         self._w.itemconfig(self._boardSpaces[i][j],fill="#0BB8FF", width=1)

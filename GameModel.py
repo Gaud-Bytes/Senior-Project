@@ -2,16 +2,18 @@ from Player import Player
 from Ship import Ship
 from HumanPlayer import HumanPlayer as hp
 from AI import AI
+from PlayerStrategy import *
 
 class GameModel:
     
     def __init__(self):
-        self._hPlayer, self._ai = (hp(), AI())
+        self._hPlayer, self._ai = (hp(HumanStrategy()), AI(AIStrategy()))
         self._gameEnd = False
         self._shipPlacementPhase = True
         self._yourTurn = True
         self._activeShip = None
         self._activeShipIndex = None
+        self._selectedSpaces = []
 
     def getPlayerBoard(self):
         return self._hPlayer.getBoard()
@@ -58,3 +60,16 @@ class GameModel:
 
     def getPlayer(self):
         return self._hPlayer
+
+    def getSelectedLength(self):
+        return len(self._selectedSpaces)
+
+    def addSelectedSpace(self, space):
+            self._selectedSpaces.append(space)
+
+    def getSelectedSpace(self, index):
+        return self._selectedSpaces[index]
+
+    def clearAllSelected(self):
+        self._selectedSpaces = []
+        

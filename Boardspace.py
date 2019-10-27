@@ -25,6 +25,9 @@ class Boardspace:
     def revertOccupy(self):
         self._occupy = False
 
+    def deselect(self):
+        self._selected = False
+
     def revertAll(self):
         self._occupied, self._attacked, self._selected = (False, False, False)
 

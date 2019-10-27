@@ -5,8 +5,8 @@ from PlayerStrategy import *
 
 class AI(Player):
 
-    def __init__(self):
-        super(AI, self).__init__(AIStrategy())
+    def __init__(self, strategy : AIStrategy()):
+        super(AI, self).__init__(strategy)
 
     def attack(self, player):
         self._strategy.attack(player)

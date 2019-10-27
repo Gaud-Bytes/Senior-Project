@@ -67,17 +67,41 @@ class GameController:
         print("Active Ship: " + aShip.getName())
     
     def __shipPlacementPhase(self, coords):
-        selectedSpaces = []
-        shipIndex = self._model.getActiveShipIndex()
+        if(self._model.getActiveShip() == None):
+            print("No Ship Selected")
+            return True
+        else:
+            shipIndex = self._model.getActiveShipIndex()
+            print(shipIndex)
 
-        self._model.getPlayerBoard().getSpace(coords[0], coords[1]).toggleSelect()
+            
+            self._model.getPlayerBoard().getSpace(coords[0], coords[1]).toggleSelect()
 
-        selectedSpaces.append(coords)
+            print(self._model.getSelectedLength())
+            if(self._model.getPlayerBoard().getSpace(coords[0], coords[1]).isSelected()):
 
-        if(len(selectedSpaces) == 2):
-            self._model.getPlayerShips()[shipIndex].setStart(coords[0])
-            self._model.getPlayerShips()[shipIndex].setEnd(coords[1])
-            self._model.getPlayer().placeShip(self._model.getPlayer(), self._model.getPlayerShips()[shipIndex], selectedSpaces[0], selectedSpaces[1])
+                self._model.addSelectedSpace(coords)
+
+                if(self._model.getSelectedLength() == 1):
+                    self._model.getPlayerShips()[shipIndex].setStart(coords)
+
+                elif(self._model.getSelectedLength() == 2):
+                    self._model.getPlayerShips()[shipIndex].setEnd(coords)
+
+                    self._model.getPlayer().placeShip(self._model.getPlayerShips()[shipIndex])
+                    self._model.setActiveShip(None, None)
+
+                    self._model.getPlayerBoard().getSpace(
+                        self._model.getSelectedSpace(0)[0],
+                        self._model.getSelectedSpace(0)[1]
+                    ).deselect()
+
+                    self._model.getPlayerBoard().getSpace(
+                        self._model.getSelectedSpace(1)[0],
+                        self._model.getSelectedSpace(1)[1]
+                    ).deselect()
+
+                    self._model.clearAllSelected()
             
 
     def __attackPhase(self, coords):
@@ -88,8 +112,8 @@ class GameController:
         self._view.displayButtons()
         self._view.displayAIShipList()
     
-        if(not self._model.isShipPlacementPhase):
-            self._model.setActiveShip(None)
+        #if(not self._model.isShipPlacementPhase):
+            #self._model.setActiveShip(None)
 
         self._root.mainloop()
 
