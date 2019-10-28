@@ -22,6 +22,7 @@ class HumanStrategy(PlayerStrategy):
     def attack(self, player, coords):
         player.getBoard().getSpace(coords[0], coords[1]).attack()
 
+#TODO probably move ship spaces setting to here. Maybe set if a ship is sunk checks in the game itself.
     def placeShip(self, player, ship):
         print(str(ship.getName()))
 

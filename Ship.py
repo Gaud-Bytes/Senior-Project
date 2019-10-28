@@ -92,11 +92,21 @@ class Ship:
     def resetShip(self):
         self._sunk = False
 
+    #TODO Maybe try this in the Place Ships under Player Strategies, Might be better since this is to check if a ship can be placd
+    # while doing this check if ships overlap.
     def __setSquareCoords(self):
-        for x in range(self._startSpace[0], self._endSpace[0] + 1):
-            for y in range(self._startSpace[1], self._endSpace[1] + 1):
-                coords = (x, y)
-                self._shipSpaces.append(coords)
+
+        if((self._endSpace[0] > self._startSpace[0]) or (self._endSpace[1] > self._startSpace[1])):
+            for x in range(self._startSpace[0], self._endSpace[0] + 1):
+                for y in range(self._startSpace[1], self._endSpace[1] + 1):
+                    coords = (x, y)
+                    self._shipSpaces.append(coords)
+
+        if((self._endSpace[0] < self._startSpace[0]) or (self._endSpace[1] < self._startSpace[1])):
+            for x in range(self._endSpace[0], self._startSpace[0] + 1):
+                for y in range(self._endSpace[1], self._startSpace[1] + 1):
+                    coords = (x, y)
+                    self._shipSpaces.append(coords)
 
     def getSpaces(self):
         return self._shipSpaces
