@@ -9,8 +9,10 @@ class GameController:
         self._root.resizable(False, False)
         self._model = gm()
         self._view = gv(self._root, self._model)
+        self.aiInitBoard()
         self.__bindEvents()
         self.__updateView()
+        
 
     #PRIVATE functions
     def __clickSpace(self, event):
@@ -141,9 +143,6 @@ class GameController:
         self._view.displayBoards()
         self._view.displayButtons()
         self._view.displayAIShipList()
-    
-        #if(not self._model.isShipPlacementPhase):
-            #self._model.setActiveShip(None)
 
         self._root.mainloop()
 
@@ -163,6 +162,12 @@ class GameController:
 
         #bind click event
         self._view.getCanvasWidget().bind("<Button-1>", self.__clickSpace)
+
+    #Just needed to mock AI placing ships
+    def aiInitBoard(self):
+        for ship in self._model.getAIShips():
+            self._model.getAIPlayer().placeShip(ship)
+
 
 gc = GameController()
 

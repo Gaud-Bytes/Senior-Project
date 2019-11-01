@@ -60,15 +60,48 @@ class AIStrategy(PlayerStrategy):
         player.getBoard().getSpace(rand(0,10), rand(0,10)).attack()
 
     def placeShip(self, player, ship):
-        start = (rand(0,10), rand(0,10))
-        direction = rand(0,2)
-        end = [rand(0,10), rand(0,10)]
 
-        end[direction] = start[direction]
+        while(self._isShipConflict(player, ship)):
+            start = (rand(0,9), rand(0,9))
+            alignment = rand(0, 1)
+            direction = rand(0, 1)
+            end = [0, 0]
 
-        ship.setStart(start)
-        ship.setEnd(end)
+            #print("start: " , start, " align: ", alignment, " Dir: " ,direction)
 
-        for x in range(ship.getSize()):
-            coords = ship.getSpaces()[x]
-            player.getBoard().getSpace(coords[0], coords[1]).occupy()
+            end[alignment] = start[alignment]
+
+            #alignment 0 is vertical, alignment 1 is horizental
+            if(alignment == 0):
+                #direction 0 is up/left and direction 1 is down/right
+                if(direction == 0 and start[1] - (ship.getSize() - 1) >= 0):
+                    end[1] = start[1] - (ship.getSize() - 1)
+                elif(direction == 0 and start[1] + (ship.getSize() - 1) < 10):
+                    end[1] = start[1] + (ship.getSize() - 1)
+                    
+                if(direction == 1 and start[1] - (ship.getSize() - 1) >= 0):
+                    end[1] = start[1] - (ship.getSize() - 1)
+                elif(direction == 1 and start[1] + (ship.getSize() - 1) < 10):
+                    end[1] = start[1] + (ship.getSize() - 1)
+
+
+            elif(alignment == 1):
+                if(direction == 0 and start[0] - (ship.getSize() - 1) >= 0):
+                    end[0] = start[0] - (ship.getSize() - 1)
+                elif(direction == 0 and start[0] + (ship.getSize() - 1) < 10):
+                    end[0] = start[0] + (ship.getSize() - 1)
+
+                if(direction == 1 and start[0] - (ship.getSize() - 1) >= 0):
+                    end[0] = start[0] - (ship.getSize() - 1)
+                elif(direction == 1 and start[0] + (ship.getSize() - 1) < 10):
+                    end[0] = start[0] + (ship.getSize() - 1)
+
+            ship.setStart(start)
+           # print("end: ", tuple(end))
+            ship.setEnd(tuple(end))
+
+        if(not self._isShipConflict(player, ship)):        
+            for x in range(ship.getSize()):
+                coords = ship.getSpaces()[x]
+                player.getBoard().getSpace(coords[0], coords[1]).occupy()
+

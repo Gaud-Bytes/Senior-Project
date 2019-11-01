@@ -89,6 +89,13 @@ class GameView:
                     else:
                         self._w.itemconfig(self._boardSpaces[i][j], outline="#000000", width=1)
 
+                    #Temp display for verifying AI places ships good 
+                    # TODO remove after testing board state changes and game states
+                    if(self._model.getAIBoard().getSpace(i,j).isOccupied()):
+                        self._w.itemconfig(self._boardSpaces[i][j], fill='#45658D', width=1)
+
+
+
                 else:
                     if(self._model.getPlayerBoard().getSpace(i,j).isAttacked() and self._model.getPlayerBoard().getSpace(i,j).isOccupied()):
                         self._w.itemconfig(self._boardSpaces[i][j], fill="#B22222", width=1)

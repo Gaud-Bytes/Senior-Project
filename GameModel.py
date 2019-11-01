@@ -75,6 +75,9 @@ class GameModel:
     def getPlayer(self):
         return self._hPlayer
 
+    def getAIPlayer(self):
+        return self._ai
+
     def getSelectedLength(self):
         return len(self._selectedSpaces)
 
