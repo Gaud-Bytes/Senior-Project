@@ -58,13 +58,18 @@ class GameController:
     def __quitgame(self, event):
         print("Quitting Game")
         self._root.destroy()
+
+    
+    def __nextPhase(self):
+        print("Advancing to next Phase")
+        self.__updateView
         
 
     def __activeShip(self, index):
         aShip = self._model.getPlayerShips()[index]
         self._model.setActiveShip(aShip, index)
-
         print("Active Ship: " + aShip.getName())
+        self.__updateView()
     
     def __shipPlacementPhase(self, coords):
         if(self._model.getActiveShip() == None):
@@ -102,7 +107,9 @@ class GameController:
                     ).deselect()
 
                     self._model.clearAllSelected()
-            
+            else:
+                self._model.clearAllSelected()
+
 
     def __attackPhase(self, coords):
         self._model.getAIBoard().getSpace(coords[0], coords[1]).toggleSelect()
@@ -119,15 +126,17 @@ class GameController:
 
     def __bindEvents(self):
         
-        #button 0-2 quit, confirm, undo.
+        #button 0-2 quit, next phase, undo.
         #button 3-8 all ship buttons
         
         #bind event to quit button
-        self._view.getButtons()[0].bind("<Button>", self.__quitgame)
+        self._view.getButtons()[0].config(command=self.__quitgame)
+
+        self._view.getButtons()[1].config(command=self.__nextPhase)
 
         #bind events to each ship button
         for x in range(3, len(self._view.getButtons())):
-            self._view.getButtons()[x].bind("<Button>", lambda event, y=x-3 : self.__activeShip(y))
+            self._view.getButtons()[x].config(command=lambda y=x-3 : self.__activeShip(y))
 
         #bind click event
         self._view.getCanvasWidget().bind("<Button-1>", self.__clickSpace)

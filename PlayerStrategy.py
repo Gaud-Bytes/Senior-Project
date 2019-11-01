@@ -13,6 +13,19 @@ class PlayerStrategy(ABC):
     def placeShip(self, player, ship):
         pass
 
+    def _isShipConflict(self, player, ship):
+
+        if(len(ship.getSpaces()) == 0):
+            return True
+
+        for pShip in player.getShips():
+            if(not (pShip == ship)):
+                for x in range(len(pShip.getSpaces())):
+                    for y in range(len(ship.getSpaces())):
+                        if(pShip.getSpaces()[x] == ship.getSpaces()[y]):
+                            return True
+        return False
+
 
 class HumanStrategy(PlayerStrategy):
 
@@ -22,14 +35,19 @@ class HumanStrategy(PlayerStrategy):
     def attack(self, player, coords):
         player.getBoard().getSpace(coords[0], coords[1]).attack()
 
-#TODO probably move ship spaces setting to here. Maybe set if a ship is sunk checks in the game itself.
     def placeShip(self, player, ship):
-        print(str(ship.getName()))
+        # should place ship if no overlapping squares. if there is overlap undo the placement
+        if(not self._isShipConflict(player, ship)):
+            for x in range(len(ship.getSpaces())):
+                coords = ship.getSpaces()[x]
+                player.getBoard().getSpace(coords[0], coords[1]).occupy()
 
-        print(len(ship.getSpaces()))
-        for x in range(len(ship.getSpaces())):
-            coords = ship.getSpaces()[x]
-            player.getBoard().getSpace(coords[0], coords[1]).occupy()
+            ship.setPlaced()
+            return True
+
+        else:
+            ship.removeShip()
+            return False
 
         
 

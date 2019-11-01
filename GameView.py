@@ -45,7 +45,20 @@ class GameView:
 
         #all the ship buttons
         for x in range(3, len(self._buttons)):
-            self._buttons[x].configure(width=10, bg='#ADD8E6', fg="#000000")
+            shipIndex = x - 3
+
+            self._buttons[x].configure(width=10, bg='#ADD8E6', fg="#000000", state=NORMAL)
+
+            if(self._model.getActiveShip() == self._model.getPlayerShips()[shipIndex]):
+                self._buttons[x].configure(width=10, bg='#37FDFC', fg="#000000", state=DISABLED)
+
+            if(self._model.getPlayerShips()[shipIndex].isPlaced()):
+                    self._buttons[x].configure(width=10, bg='#ADD8E6', fg="#000000", state=DISABLED)
+
+            if(self._model.getPlayerShips()[shipIndex].isSunk()):
+                self._buttons[x].configure(width=10, bg='#FF0000', fg="#000000", state=DISABLED)
+
+            
                 
 
     def displayAIShipList(self):
@@ -96,14 +109,16 @@ class GameView:
         quitB = Button(self._w, text="Quit", anchor=W)
         quitB_window = self._w.create_window(buttonX, 500, anchor=S, window=quitB)
 
-        confirm = Button(self._w, text="Confrim", anchor=W)
-        confirm_window = self._w.create_window(350, 600, anchor=S, window=confirm)
+        nextPhase = Button(self._w, text="Next Phase", anchor=W)
+        nextPhase_window = self._w.create_window(350, 600, anchor=S, window=nextPhase)
 
         undo = Button(self._w, text="Undo", anchor=W)
         undo_window = self._w.create_window(450, 600, anchor=S, window=undo)
 
         self._buttons.append(quitB)
-        self._buttons.append(confirm)
+        self._buttons.append(nextPhase)
+        
+        #May Remove this button depending
         self._buttons.append(undo)
 
         for x in range(len(self._model.getPlayerShips())):

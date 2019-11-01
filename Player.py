@@ -6,7 +6,6 @@ from Ship import Ship
 class Player(ABC):
 
     def __init__(self, strategy):
-        print("I am in the player Class")
         if(isinstance(strategy, PlayerStrategy)):
             self._strategy = strategy
         else:
