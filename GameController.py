@@ -20,7 +20,7 @@ class GameController:
         if(coords[0] == -1 or coords[1] == -1):
             return False
         
-        if(self._model.yourTurn() and not self._model.isShipPlacementPhase()):
+        if(self._model.isAttackPhase()):
             self.__attackPhase(coords)
         elif(self._model.isShipPlacementPhase()):
             self.__shipPlacementPhase(coords)
@@ -55,14 +55,33 @@ class GameController:
 
         return (xCoord, yCoord)
 
-    def __quitgame(self, event):
+    def __quitgame(self):
         print("Quitting Game")
         self._root.destroy()
 
     
     def __nextPhase(self):
-        print("Advancing to next Phase")
-        self.__updateView
+        if(self._model.isShipPlacementPhaseReadyToEnd()):
+            print("Advancing to attack Phase")
+            self._model.shipPlacementEnd()
+            self._model.startAttackPhase()
+            self._model.resetShipPhaseEndFlag()
+            
+
+        elif(self._model.isAttackPhase() and self._model.isPlayerOneTurn()):
+            print("Changing from Player 1s attack to Player 2s")
+            self._model.setPlayerTurn(2)
+
+        elif(self._model.isAttackPhase() and self._model.isPlayerTwoTurn()):
+            print("Changing from player 2s attack phase to player 1s")
+            self._model.setPlayerTurn(1)
+        else:
+            print("Failed to advance to next phase")
+            return False
+
+        self.__updateView()
+        return True
+
         
 
     def __activeShip(self, index):
@@ -109,6 +128,10 @@ class GameController:
                     self._model.clearAllSelected()
             else:
                 self._model.clearAllSelected()
+
+            if(self._model.getPlayer().areAllShipsPlaced()):
+                self._model.setShipPlacementPhaseReadyToEnd()
+                
 
 
     def __attackPhase(self, coords):

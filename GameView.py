@@ -37,8 +37,11 @@ class GameView:
         #quitButton
         self._buttons[0].configure(width =10, bg='#800000', fg="#FFFFFF")
         
-        #confirmButton
-        self._buttons[1].configure(width=10, bg='#D4AF37')
+        #Next Phase Button
+        if(self._model.isShipPlacementPhaseReadyToEnd() or self._model.isAttackPhaseReadyToEnd()):
+            self._buttons[1].configure(width=10, bg='#00AB66', fg='#000000' , state=NORMAL)
+        else:
+            self._buttons[1].configure(width=10, bg='#A98307', fg='#FFFFFF', state=DISABLED)
 
         #undoButton
         self._buttons[2].configure(width=10, bg='#E0115F')
@@ -73,7 +76,7 @@ class GameView:
     def displayBoards(self):
         for i in range(len(self._boardSpaces)):
             for j in range(len(self._boardSpaces[i])):
-                if self._model.yourTurn() and not self._model.isShipPlacementPhase():
+                if self._model.isPlayerOneTurn() and self._model.isAttackPhase():
                     if(self._model.getAIBoard().getSpace(i,j).isAttacked() and self._model.getAIBoard().getSpace(i,j).isOccupied()):
                         self._w.itemconfig(self._boardSpaces[i][j], fill="#B22222", width=1)
                     elif(self._model.getAIBoard().getSpace(i,j).isAttacked() and not self._model.getAIBoard().getSpace(i,j).isOccupied()):

@@ -10,7 +10,11 @@ class GameModel:
         self._hPlayer, self._ai = (hp(HumanStrategy()), AI(AIStrategy()))
         self._gameEnd = False
         self._shipPlacementPhase = True
-        self._yourTurn = True
+        self._attackPhase = False
+        self._firstPlayerTurn = True
+        self._secondPlayerTurn = False
+        self._shipPlacementPhaseReadyToEnd = False
+        self._attackPhaseReadyToEnd = False
         self._activeShip = None
         self._activeShipIndex = None
         self._selectedSpaces = []
@@ -27,14 +31,21 @@ class GameModel:
     def getAIShips(self):
         return self._ai.getShips()
 
-    def yourTurn(self):
-        return self._yourTurn
+    def setPlayerTurn(self, num):
+        if(isinstance(num, int) and num == 1):
+            self._firstPlayerTurn = True
+            self._secondPlayerTurn = False
 
-    def turnChange(self):
-        if(self._yourTurn):
-            self._yourTurn = False
         else:
-            self._yourTurn = True
+            self._firstPlayerTurn = False
+            self._secondPlayerTurn = True
+
+    def isPlayerOneTurn(self):
+        return self._firstPlayerTurn
+
+    def isPlayerTwoTurn(self):
+        return self._secondPlayerTurn
+
 
     def shipPlacementEnd(self):
         self._shipPlacementPhase = False
@@ -44,6 +55,9 @@ class GameModel:
 
     def isShipPlacementPhase(self):
         return self._shipPlacementPhase
+
+    def isAttackPhase(self):
+        return self._attackPhase
 
     def isGameOver(self):
         return self._gameEnd
@@ -72,4 +86,36 @@ class GameModel:
 
     def clearAllSelected(self):
         self._selectedSpaces = []
+        
+    def isShipPlacementPhaseReadyToEnd(self):
+        return self._shipPlacementPhaseReadyToEnd
+
+    def isAttackPhaseReadyToEnd(self):
+        return self._attackPhaseReadyToEnd
+
+    def setShipPlacementPhaseReadyToEnd(self):
+        self._shipPlacementPhaseReadyToEnd = True
+
+    def resetShipPhaseEndFlag(self):
+        self._shipPlacementPhaseReadyToEnd = False
+
+    def setAttackPhaseReadyToEnd(self):
+        self._attackPhaseReadyToEnd = True
+
+    def resetAttackPhaseEndFlag(self):
+        self._attackPhaseReadyToEnd = False
+
+    def startAttackPhase(self):
+        if(self._shipPlacementPhase):
+            self._attackPhase = False
+        else:
+            self._attackPhase = True
+
+    def startShipPlacementPhase(self):
+        if(self._attackPhase):
+            self._shipPlacementPhase = False
+        else:
+            self._shipPlacementPhase = True
+
+
         

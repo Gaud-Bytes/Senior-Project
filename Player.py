@@ -30,3 +30,11 @@ class Player(ABC):
 
     def getBoard(self):
         return self._board
+
+    def areAllShipsPlaced(self):
+
+        for ship in self._ships:
+            if(not ship.isPlaced()):
+                return False
+
+        return True
