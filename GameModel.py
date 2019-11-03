@@ -15,6 +15,7 @@ class GameModel:
         self._secondPlayerTurn = False
         self._shipPlacementPhaseReadyToEnd = False
         self._attackPhaseReadyToEnd = False
+        self._spaceSelected = False
         self._activeShip = None
         self._activeShipIndex = None
         self._selectedSpaces = []
@@ -120,5 +121,12 @@ class GameModel:
         else:
             self._shipPlacementPhase = True
 
+    def setSpaceToSelected(self):
+        self._spaceSelected = True
 
+    def setNoSpaceSelected(self):
+        self._spaceSelected = False
+
+    def isASpaceSelected(self):
+        return self._spaceSelected
         

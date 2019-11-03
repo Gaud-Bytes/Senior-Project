@@ -105,3 +105,10 @@ class AIStrategy(PlayerStrategy):
                 coords = ship.getSpaces()[x]
                 player.getBoard().getSpace(coords[0], coords[1]).occupy()
 
+            ship.setPlaced()
+            return True
+
+        else:
+            ship.removeShip()
+            return False
+

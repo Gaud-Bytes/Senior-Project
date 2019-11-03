@@ -33,36 +33,35 @@ class GameView:
         return self._buttons
 
     def displayButtons(self):
-
-        #quitButton
-        self._buttons[0].configure(width =10, bg='#800000', fg="#FFFFFF")
         
-        #Next Phase Button
-        if(self._model.isShipPlacementPhaseReadyToEnd() or self._model.isAttackPhaseReadyToEnd()):
-            self._buttons[1].configure(width=10, bg='#00AB66', fg='#000000' , state=NORMAL)
-        else:
-            self._buttons[1].configure(width=10, bg='#A98307', fg='#FFFFFF', state=DISABLED)
-
-        #undoButton
-        self._buttons[2].configure(width=10, bg='#E0115F')
-
         #all the ship buttons
-        for x in range(3, len(self._buttons)):
-            shipIndex = x - 3
-
+        for x in range(len(self._buttons) - 3):
             self._buttons[x].configure(width=10, bg='#ADD8E6', fg="#000000", state=NORMAL)
 
-            if(self._model.getActiveShip() == self._model.getPlayerShips()[shipIndex]):
+            if(self._model.getActiveShip() == self._model.getPlayerShips()[x]):
                 self._buttons[x].configure(width=10, bg='#37FDFC', fg="#000000", state=DISABLED)
 
-            if(self._model.getPlayerShips()[shipIndex].isPlaced()):
+            if(self._model.getPlayerShips()[x].isPlaced()):
                     self._buttons[x].configure(width=10, bg='#ADD8E6', fg="#000000", state=DISABLED)
 
-            if(self._model.getPlayerShips()[shipIndex].isSunk()):
+            if(self._model.getPlayerShips()[x].isSunk()):
                 self._buttons[x].configure(width=10, bg='#FF0000', fg="#000000", state=DISABLED)
 
-            
-                
+        #quitButton
+        self._buttons[5].configure(width =10, bg='#800000', fg="#FFFFFF")
+        
+        #Next Phase Button
+        #TODO may have to rename varible to AttackTurnReadyToEnd
+        if(self._model.isShipPlacementPhaseReadyToEnd() or self._model.isAttackPhaseReadyToEnd()):
+            self._buttons[6].configure(width=10, bg='#00AB66', fg='#000000' , state=NORMAL)
+        else:
+            self._buttons[6].configure(width=10, bg='#A98307', fg='#FFFFFF', state=DISABLED)
+
+        #Attack Button
+        if(self._model.isASpaceSelected()):
+            self._buttons[7].configure(width=10, bg='#E0115F', fg='#FFFFFF', state=NORMAL)
+        else:
+            self._buttons[7].configure(width=10, bg='#800080', fg='#FFFFFF', state=DISABLED)
 
     def displayAIShipList(self):
         
@@ -91,7 +90,7 @@ class GameView:
 
                     #Temp display for verifying AI places ships good 
                     # TODO remove after testing board state changes and game states
-                    if(self._model.getAIBoard().getSpace(i,j).isOccupied()):
+                    if(self._model.getAIBoard().getSpace(i,j).isOccupied() and not self._model.getAIBoard().getSpace(i, j).isAttacked()):
                         self._w.itemconfig(self._boardSpaces[i][j], fill='#45658D', width=1)
 
 
@@ -104,7 +103,7 @@ class GameView:
                     elif(self._model.getPlayerBoard().getSpace(i, j).isOccupied() and not self._model.getPlayerBoard().getSpace(i,j).isAttacked()):
                         self._w.itemconfig(self._boardSpaces[i][j], fill="#AAA9AD", width=1)
                     else:
-                        self._w.itemconfig(self._boardSpaces[i][j],fill="#0BB8FF", width=1)
+                        self._w.itemconfig(self._boardSpaces[i][j],fill="#17A3F1", width=1)
 
                     if(self._model.getPlayerBoard().getSpace(i,j).isSelected()):
                         self._w.itemconfig(self._boardSpaces[i][j], outline="#FF6347", width=3)
@@ -116,26 +115,35 @@ class GameView:
 
         buttonX = 150
 
+        for x in range(len(self._model.getPlayerShips())):
+            buttonX += 100
+
+            if(x == 0):
+                shipButtonLabel = self._model.getPlayerShips()[x].getName() + "(5)"
+            elif(x == 1):
+                shipButtonLabel = self._model.getPlayerShips()[x].getName() + "(4)"
+            elif(x == 2 or x == 3):
+                shipButtonLabel = self._model.getPlayerShips()[x].getName() + "(3)"
+            elif(x == 4):
+                shipButtonLabel = self._model.getPlayerShips()[x].getName() + "(2)"
+
+            shipButton = Button(self._w, text=shipButtonLabel, anchor=W)
+            shipButton_window = self._w.create_window(buttonX, 500, anchor=S, window=shipButton)
+            self._buttons.append(shipButton)
+
         quitB = Button(self._w, text="Quit", anchor=W)
-        quitB_window = self._w.create_window(buttonX, 500, anchor=S, window=quitB)
+        quitB_window = self._w.create_window(150, 500, anchor=S, window=quitB)
 
         nextPhase = Button(self._w, text="Next Phase", anchor=W)
         nextPhase_window = self._w.create_window(350, 600, anchor=S, window=nextPhase)
 
-        undo = Button(self._w, text="Undo", anchor=W)
-        undo_window = self._w.create_window(450, 600, anchor=S, window=undo)
+        attackButton = Button(self._w, text="Attack", anchor=W)
+        attackButton_window = self._w.create_window(450, 600, anchor=S, window=attackButton)
 
         self._buttons.append(quitB)
         self._buttons.append(nextPhase)
-        
-        #May Remove this button depending
-        self._buttons.append(undo)
 
-        for x in range(len(self._model.getPlayerShips())):
-            buttonX += 100
-            shipButton = Button(self._w, text=self._model.getPlayerShips()[x].getName(), anchor=W)
-            shipButton_window = self._w.create_window(buttonX, 500, anchor=S, window=shipButton)
-            self._buttons.append(shipButton)
+        self._buttons.append(attackButton)
 
 ###PRIVATE functions
     def __createLabels(self):
