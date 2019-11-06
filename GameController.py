@@ -9,9 +9,9 @@ class GameController:
         self._root.resizable(False, False)
         self._model = gm()
         self._view = gv(self._root, self._model)
-        self.__aiInitBoard()
         self.__bindEvents()
         self.__updateView()
+        self._root.mainloop()
         
 
     #PRIVATE functions
@@ -21,6 +21,10 @@ class GameController:
 
         if(coords[0] == -1 or coords[1] == -1):
             return False
+
+        if(self._model.isGameOver()):
+            print("Game is over")
+            return True
 
         
         if(self._model.isAttackPhase() and self._model.isPlayerOneTurn()):
@@ -65,8 +69,16 @@ class GameController:
 
     
     def __nextPhase(self):
+
+        self.__checkIfShipsNeedToBeSunk()
+
+        print(self._model.allPlayerShipsSunk(self._model.getAIPlayer()))
+        if(self._model.allPlayerShipsSunk(self._model.getAIPlayer()) or self._model.allPlayerShipsSunk(self._model.getPlayer())):
+            self._model.endGame()
+
         if(self._model.isShipPlacementPhaseReadyToEnd()):
             print("Advancing to attack Phase")
+            self.__aiInitBoard()
             self._model.shipPlacementEnd()
             self._model.startAttackPhase()
             self._model.resetShipPhaseEndFlag()
@@ -76,6 +88,7 @@ class GameController:
             print("Changing from Player 1s attack to Player 2s")
             self._model.setPlayerTurn(2)
             self._model.resetAttackPhaseEndFlag()
+            self.__aiTurn()
 
         elif(self._model.isAttackPhase() and self._model.isPlayerTwoTurn()):
             print("Changing from player 2s attack phase to player 1s")
@@ -173,6 +186,10 @@ class GameController:
         else:
 
             print(coords)
+            if(self._model.getAIBoard().getSpace(coords[0], coords[1]).isAttacked()):
+                print("cannot select and already attacked square")
+                return False
+            
             self._model.getAIBoard().getSpace(coords[0], coords[1]).toggleSelect()
 
             if(self._model.getAIBoard().getSpace(coords[0], coords[1]).isSelected()):
@@ -206,8 +223,6 @@ class GameController:
         self._view.displayButtons()
         self._view.displayAIShipList()
 
-        self._root.mainloop()
-
     def __bindEvents(self):
 
         #button 0-4 ships
@@ -233,6 +248,30 @@ class GameController:
     def __aiInitBoard(self):
         for ship in self._model.getAIShips():
             self._model.getAIPlayer().placeShip(ship)
+
+    def __aiTurn(self):
+
+        #Logic in attack controlls AIs learning.
+        if(self._model.isAttackPhase() and self._model.isPlayerTwoTurn()):
+            self._model.getAIPlayer().attack(self._model.getPlayer())
+            self._model.setAttackPhaseReadyToEnd()
+
+    def __checkIfShipsNeedToBeSunk(self):
+
+        for ship in self._model.getAIShips():
+           if(not ship.isSunk() and self._model.getAIPlayer().allSpacesAttacked(ship)):
+                print(ship.getName(), " is Sunk")
+                ship.sinkShip()
+
+        for ship in self._model.getPlayerShips():
+            if(not ship.isSunk() and self._model.getPlayer().allSpacesAttacked(ship)):
+                print(ship.getName(), " is Sunk")
+                ship.sinkShip()
+
+
+        
+
+        
 
 
 gc = GameController()

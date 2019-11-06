@@ -123,5 +123,6 @@ class Ship:
     
     def removeShip(self):
         self._placed = False
+        self._sunk = False
         self._shipSpaces = []
 

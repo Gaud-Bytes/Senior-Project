@@ -129,4 +129,10 @@ class GameModel:
 
     def isASpaceSelected(self):
         return self._spaceSelected
-        
+
+    def allPlayerShipsSunk(self, player):
+        if player.areAllShipsSunk():
+            return True
+
+        return False
+

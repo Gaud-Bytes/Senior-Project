@@ -57,7 +57,7 @@ class AIStrategy(PlayerStrategy):
         pass
 
     def attack(self, player):
-        player.getBoard().getSpace(rand(0,10), rand(0,10)).attack()
+        player.getBoard().getSpace(rand(0,9), rand(0,9)).attack()
 
     def placeShip(self, player, ship):
 
