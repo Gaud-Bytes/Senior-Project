@@ -48,6 +48,7 @@ class Player(ABC):
 
     def allSpacesAttacked (self, ship):
         for coords in ship.getSpaces():
+            print(coords)
             if (not self._board.getSpace(coords[0], coords[1]).isAttacked()):
                 print("Not Sunk")
                 return False

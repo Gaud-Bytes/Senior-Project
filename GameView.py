@@ -51,8 +51,8 @@ class GameView:
         self._buttons[5].configure(width =10, bg='#800000', fg="#FFFFFF")
         
         #Next Phase Button
-        #TODO may have to rename varible to AttackTurnReadyToEnd
-        if(self._model.isShipPlacementPhaseReadyToEnd() or self._model.isAttackPhaseReadyToEnd()):
+        
+        if(self._model.isShipPlacementPhaseReadyToEnd() or self._model.isAttackPhaseReadyToEnd() or self._model.isGameOver()):
             self._buttons[6].configure(width=10, bg='#00AB66', fg='#000000' , state=NORMAL)
         else:
             self._buttons[6].configure(width=10, bg='#A98307', fg='#FFFFFF', state=DISABLED)
@@ -68,9 +68,19 @@ class GameView:
         #Title Label
         self._shipList[0].configure(width=10, font=("Helvetica", 12))
 
+        #game over label
+
+        if(self._model.allPlayerShipsSunk(self._model.getPlayer()) and self._model.isGameOver()):
+            self._shipList[1].configure(width=20, font=("Helvetica", 14), fg="#B22222", bg='#FFFFFF', text="Game Over: You Lose")
+        elif(self._model.allPlayerShipsSunk(self._model.getAIPlayer()) and self._model.isGameOver()):
+            self._shipList[1].configure(width=20, font=("Helvetica", 14), fg="#228B22", bg='#FFFFFF', text="Game Over: You Win")
+
         #each ships Label
-        for x in range(1, len(self._shipList)):
-            self._shipList[x].configure(width=10, font=("Helvetica bold", 12))
+        for x in range(2, len(self._shipList)):
+            self._shipList[x].configure(width=10, font=("Helvetica bold", 12), bg='#FFFFFF')
+
+            if(self._model.getAIShips()[x-2].isSunk()):
+                self._shipList[x].configure(bg="#B22222", fg='#FFFFFF')
 
     def displayBoards(self):
         for i in range(len(self._boardSpaces)):
@@ -87,13 +97,6 @@ class GameView:
                         self._w.itemconfig(self._boardSpaces[i][j], outline="#FF6347", width=3)
                     else:
                         self._w.itemconfig(self._boardSpaces[i][j], outline="#000000", width=1)
-
-                    #Temp display for verifying AI places ships good 
-                    # TODO remove after testing board state changes and game states
-                    if(self._model.getAIBoard().getSpace(i,j).isOccupied() and not self._model.getAIBoard().getSpace(i, j).isAttacked()):
-                        self._w.itemconfig(self._boardSpaces[i][j], fill='#45658D', width=1)
-
-
 
                 else:
                     if(self._model.getPlayerBoard().getSpace(i,j).isAttacked() and self._model.getPlayerBoard().getSpace(i,j).isOccupied()):
@@ -152,7 +155,11 @@ class GameView:
         title = Label(self._w, text="AI Ships:", anchor=W, bg='#AAA9AD' )
         title_window = self._w.create_window(labelX, 550, anchor=S, window=title)
 
+        gameOverLabel = Label(self._w, text="", anchor=W, bg='#000000')
+        gameOverLabel_window = self._w.create_window(350, 700, anchor=S, window=gameOverLabel)
+
         self._shipList.append(title)
+        self._shipList.append(gameOverLabel)
 
         for x in range(len(self._model.getAIShips())):
             labelX += 100
@@ -160,6 +167,8 @@ class GameView:
             shipLabel.configure(width=10, font=("Helvetica bold", 12))
             shipLabel_window = self._w.create_window(labelX, 550, anchor=S, window=shipLabel)
             self._shipList.append(shipLabel)
+
+
 
     def __createBoard(self):
         x1, y1, x2, y2 = (180, 10, 224, 54)

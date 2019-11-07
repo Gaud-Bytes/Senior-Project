@@ -9,6 +9,7 @@ class GameController:
         self._root.resizable(False, False)
         self._model = gm()
         self._view = gv(self._root, self._model)
+        self.__aiInitBoard()
         self.__bindEvents()
         self.__updateView()
         self._root.mainloop()
@@ -72,13 +73,11 @@ class GameController:
 
         self.__checkIfShipsNeedToBeSunk()
 
-        print(self._model.allPlayerShipsSunk(self._model.getAIPlayer()))
         if(self._model.allPlayerShipsSunk(self._model.getAIPlayer()) or self._model.allPlayerShipsSunk(self._model.getPlayer())):
             self._model.endGame()
 
         if(self._model.isShipPlacementPhaseReadyToEnd()):
             print("Advancing to attack Phase")
-            self.__aiInitBoard()
             self._model.shipPlacementEnd()
             self._model.startAttackPhase()
             self._model.resetShipPhaseEndFlag()
@@ -87,13 +86,15 @@ class GameController:
         elif(self._model.isAttackPhase() and self._model.isPlayerOneTurn()):
             print("Changing from Player 1s attack to Player 2s")
             self._model.setPlayerTurn(2)
-            self._model.resetAttackPhaseEndFlag()
-            self.__aiTurn()
+            if(not self._model.isGameOver()):
+                self._model.resetAttackPhaseEndFlag()
+                self.__aiTurn()
 
         elif(self._model.isAttackPhase() and self._model.isPlayerTwoTurn()):
             print("Changing from player 2s attack phase to player 1s")
             self._model.setPlayerTurn(1)
-            self._model.resetAttackPhaseEndFlag()
+            if(not self._model.isGameOver()):
+                self._model.resetAttackPhaseEndFlag()
         else:
             print("Failed to advance to next phase")
             return False
