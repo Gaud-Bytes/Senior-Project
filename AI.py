@@ -2,6 +2,7 @@ import sqlite3 as sql
 from Player import Player
 from Ship import Ship
 from PlayerStrategy import *
+from random import randint as rand
 
 class AI(Player):
 
@@ -9,15 +10,18 @@ class AI(Player):
         super(AI, self).__init__(strategy)
 
     def attack(self, player):
-        self._strategy.attack(player)
+        #self.__readGameData()
+        coords = (rand(0, 9), rand(0, 9))
+        self._strategy.attack(player, coords)
+        self.__updateGameData(coords[0], coords[1])
 
     def placeShip(self, ship):
         self._strategy.placeShip(self, ship)
 
-    def readGameData(self):
+    def __readGameData(self):
         pass
 
-    def updateGameData(self, x, y):
+    def __updateGameData(self, x, y):
         conn = sql.connect('GameData.db')
         c = conn.cursor()
 
@@ -26,10 +30,10 @@ class AI(Player):
 
         weight = int(space[2])
 
-        if self._board[x][y].isAttacked() and self._board[x][y].isOccupied():
+        if self._board.getSpace(x, y).isAttacked() and self._board.getSpace(x, y).isOccupied():
             weight += 1
 
-        elif self._board[x][y].isAttacked() and not self._board[x][y].isOccupied():
+        elif self._board.getSpace(x, y).isAttacked() and not self._board.getSpace(x, y).isOccupied():
             weight -= 1
 
         else: 
@@ -38,6 +42,8 @@ class AI(Player):
             return False
 
         c.execute('''UPDATE BOARD SET BOARD_WEIGHT = ? WHERE BOARD_X = ? and BOARD_Y = ?''', (weight, x, y))
+
+        #saves and closes connections
         conn.commit()
         c.close()
         conn.close()

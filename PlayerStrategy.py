@@ -56,15 +56,9 @@ class AIStrategy(PlayerStrategy):
     def __init__(self):
         pass
 
-    def attack(self, player):
-
-        #player.readGameData()
-        x =  rand(0, 9)
-        y = rand(0, 9)
-        player.getBoard().getSpace(x, y).attack()
+    def attack(self, player, coords):
+        player.getBoard().getSpace(coords[0], coords[1]).attack()
         
-        player.updateGameData(x, y)
-
     def placeShip(self, player, ship):
 
         while(self._isShipConflict(player, ship)):
