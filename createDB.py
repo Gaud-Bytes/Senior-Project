@@ -3,9 +3,10 @@ import sqlite3 as sql
 conn = sql.connect('GameData.db')
 c = conn.cursor()
 
-c.execute('''DROP TABLE BOARD;''')
+c.execute('''VACUUM;''')
+c.execute('''DROP TABLE IF EXISTS BOARD;''')
 
-c.execute('''CREATE TABLE BOARD(
+c.execute('''CREATE TABLE IF NOT EXISTS BOARD(
     BOARD_X INT NOT NULL,
     BOARD_Y INT NOT NULL,
     BOARD_WEIGHT INT NOT NULL DEFAULT 1,
@@ -26,6 +27,7 @@ rows = c.fetchall()
 for row in rows:
     print(row)
 
+c.close()
 conn.close()
 
 
