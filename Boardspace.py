@@ -2,7 +2,7 @@ class Boardspace:
 
     def __init__(self):
         self._occupied, self._attacked, self._selected = (False, False, False)
-        #self._coords = ()
+        self._weight = 1
 
     def occupy(self):
         self._occupied = True
@@ -10,8 +10,6 @@ class Boardspace:
     def attack(self):
         self._attacked = True
 
-   # def setCoords(self, x, y):
-        #self._coords = (x, y)
     def toggleSelect(self):
         if not self._selected:
             self._selected = True
@@ -40,8 +38,15 @@ class Boardspace:
     def isSelected(self):
         return self._selected
 
-    #def getCoords(self):
-       #return self._coords
+    def setWeight(self, weight):
+        if(isinstance(weight, int) and weight >= 0):
+            self._weight = weight
+        else:
+            return False
+
+    def getWeight(self):
+        return self._weight
+
 
 
     

@@ -10,18 +10,34 @@ class AI(Player):
         super(AI, self).__init__(strategy)
 
     def attack(self, player):
-        #self.__readGameData()
+        self.__readGameData(player)
         coords = (rand(0, 9), rand(0, 9))
         self._strategy.attack(player, coords)
-        self.__updateGameData(coords[0], coords[1])
+        self.__updateGameData(player, coords[0], coords[1])
 
     def placeShip(self, ship):
         self._strategy.placeShip(self, ship)
 
-    def __readGameData(self):
-        pass
+    def __readGameData(self, player):
+        print("Reading Game Data...")
+        conn = sql.connect('GameData.db')
+        c = conn.cursor()
 
-    def __updateGameData(self, x, y):
+        c.execute('''SELECT * FROM BOARD''')
+        spaces = c.fetchall()
+
+        for space in spaces:
+            x = int(space[0])
+            y = int(space[1])
+            weight = int(space[2])
+            player.getBoard().getSpace(x, y).setWeight(weight)
+
+        c.close()
+        conn.close()
+        print("Game Data Read.")
+
+    def __updateGameData(self, player, x, y):
+        print("Updating Game Data...")
         conn = sql.connect('GameData.db')
         c = conn.cursor()
 
@@ -30,13 +46,14 @@ class AI(Player):
 
         weight = int(space[2])
 
-        if self._board.getSpace(x, y).isAttacked() and self._board.getSpace(x, y).isOccupied():
+        if player.getBoard().getSpace(x, y).isAttacked() and player.getBoard().getSpace(x, y).isOccupied():
             weight += 1
 
-        elif self._board.getSpace(x, y).isAttacked() and not self._board.getSpace(x, y).isOccupied():
+        elif player.getBoard().getSpace(x, y).isAttacked() and not player.getBoard().getSpace(x, y).isOccupied():
             weight -= 1
 
         else: 
+            print("INVALID OPTION : ", weight)
             c.close()
             conn.close()
             return False
@@ -47,3 +64,4 @@ class AI(Player):
         conn.commit()
         c.close()
         conn.close()
+        print("Updated Data")

@@ -58,6 +58,7 @@ class AIStrategy(PlayerStrategy):
 
     def attack(self, player, coords):
         player.getBoard().getSpace(coords[0], coords[1]).attack()
+        print("SPACE ATTACK: ", coords, player.getBoard().getSpace(coords[0], coords[1]).isAttacked())
         
     def placeShip(self, player, ship):
 
