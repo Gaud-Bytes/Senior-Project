@@ -2,6 +2,7 @@ class Boardspace:
 
     def __init__(self):
         self._occupied, self._attacked, self._selected = (False, False, False)
+        self._x , self._y = (0, 0)
         self._weight = 1
 
     def occupy(self):
@@ -46,6 +47,12 @@ class Boardspace:
 
     def getWeight(self):
         return self._weight
+
+    def setCoords(self, x, y):
+        self._x, self._y = (x, y)
+
+    def getCoords(self):
+        return (self._x, self._y)
 
 
 

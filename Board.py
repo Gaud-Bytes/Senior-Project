@@ -11,14 +11,11 @@ class Board:
         for x in range(self._rows):
             for y in range(self._cols):
                 self._board[x][y] = bs()
-                #self._board[x][y].setCoords(x, y)
+                self._board[x][y].setCoords(x, y)
 
                 
     def getSpace(self, row, col):
         return self._board[row][col]
-
-    #def getOwner(self):
-       # return self._owner
 
     def getRows(self):
         return self._rows

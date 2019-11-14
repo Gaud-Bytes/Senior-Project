@@ -11,7 +11,9 @@ class AI(Player):
 
     def attack(self, player):
         self.__readGameData(player)
-        coords = (rand(0, 9), rand(0, 9))
+        #coords = (rand(0, 9), rand(0, 9))
+        coords = self.__chooseASquare(player)
+        #TODO will be able to get rid of coords parameter when I get the attack decision to be based on the weights rather than random
         self._strategy.attack(player, coords)
         self.__updateGameData(player, coords[0], coords[1])
 
@@ -46,14 +48,14 @@ class AI(Player):
 
         weight = int(space[2])
 
-        if player.getBoard().getSpace(x, y).isAttacked() and player.getBoard().getSpace(x, y).isOccupied():
-            weight += 1
+        if player.getBoard().getSpace(x, y).isAttacked() and player.getBoard().getSpace(x, y).isOccupied() and weight < 95:
+            weight += 4
 
-        elif player.getBoard().getSpace(x, y).isAttacked() and not player.getBoard().getSpace(x, y).isOccupied():
+        elif player.getBoard().getSpace(x, y).isAttacked() and not player.getBoard().getSpace(x, y).isOccupied() and weight > 1:
             weight -= 1
 
         else: 
-            print("INVALID OPTION : ", weight)
+            print("Nothing to be updated")
             c.close()
             conn.close()
             return False
@@ -65,3 +67,36 @@ class AI(Player):
         c.close()
         conn.close()
         print("Updated Data")
+
+    def __chooseASquare(self, player):
+
+        check = rand(0, 100)
+        print("checkVal: ", check)
+        tempList = []
+
+
+        for x in range(player.getBoard().getRows()):
+            for y in range(player.getBoard().getCols()):
+                tempList.append(player.getBoard().getSpace(x, y))
+                #if player.getBoard().getSpace(x, y).getWeight() >= check and not player.getBoard().getSpace(x, y).isAttacked():
+                    #return (x, y)
+        tempList.sort(key=lambda x : x.getWeight(), reverse=True)
+
+        for space in tempList:
+            if space.getWeight() >= check and not space.isAttacked():
+                return (space.getCoords()[0], space.getCoords()[1])
+
+        x = rand(0, 9)
+        y = rand(0, 9)
+
+        if(not player.getBoard().getSpace(x, y).isAttacked()):
+            return (x, y)
+
+        else:
+            while(player.getBoard().getSpace(x, y).isAttacked()):
+                x = rand(0, 9)
+                y = rand(0, 9)
+
+        return (x, y)
+
+

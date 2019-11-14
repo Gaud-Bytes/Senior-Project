@@ -48,12 +48,8 @@ class Player(ABC):
 
     def allSpacesAttacked (self, ship):
         for coords in ship.getSpaces():
-            print(coords)
             if (not self._board.getSpace(coords[0], coords[1]).isAttacked()):
-                print("Not Sunk")
                 return False
-
-        print(ship.getName(), "why am I turning true by default For AI")
 
         return True
 
