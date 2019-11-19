@@ -73,8 +73,9 @@ class GameController:
 
         self.__checkIfShipsNeedToBeSunk()
 
-        if(self._model.allPlayerShipsSunk(self._model.getAIPlayer()) or self._model.allPlayerShipsSunk(self._model.getPlayer())):
+        if(not self._model.isGameOver() and self._model.allPlayerShipsSunk(self._model.getAIPlayer()) or self._model.allPlayerShipsSunk(self._model.getPlayer())):
             self._model.endGame()
+            self._model.getAIPlayer().endGameUpdate(self._model.getPlayer())
 
         if(self._model.isShipPlacementPhaseReadyToEnd()):
             print("Advancing to attack Phase")
