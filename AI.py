@@ -8,17 +8,27 @@ class AI(Player):
 
     def __init__(self, strategy : AIStrategy()):
         super(AI, self).__init__(strategy)
-        self._lastHit = []
-        self._adjacent = []
-        self._currentHitShips = []
+        #Used in parrallel
+        self._unattackedSquares = []
+        self._leftSquares = []
+        self._upSquares = []
+        self._rightSquares = []
+        self._downSquares = []
+        self._successRates = []
+        self._gameData = []
+        self._sameHighestRate = []
+       # self._lastHit = []
+       # self._adjacent = []
+       # self._currentHitShips = []
 
     def attack(self, player):
         self.__readGameData(player)
-        #coords = (rand(0, 9), rand(0, 9))
+        self.__setUnAttackedSquares(player)
+        self.__setSuccessRatesForUnAttackedSquares(player)
         coords = self.__chooseASquare(player)
         self._strategy.attack(player, coords)
-        self.__updateLastHit(player, coords)
-        self.__removeCurrentHitShipsAfterSunk(player)
+        #self.__updateLastHit(player, coords)
+        #self.__removeCurrentHitShipsAfterSunk(player)
         self.__updateGameData(player, coords[0], coords[1])
 
     def placeShip(self, ship):
@@ -29,43 +39,54 @@ class AI(Player):
         conn = sql.connect('GameData.db')
         c = conn.cursor()
 
-        c.execute('''SELECT * FROM BOARD''')
-        spaces = c.fetchall()
+        c.execute('''SELECT * FROM SPACE_EVAL''')
+        rows = c.fetchall()
+        self._gameData = []
+        for row in rows:
+            self._gameData.append({'left' : row[1], 'up' : row[2], 'right' : row[3], 'down' : row[4], 'success' : row[5], 'total' : row[6]})
 
-        for space in spaces:
-            x = int(space[0])
-            y = int(space[1])
-            weight = int(space[2])
-            player.getBoard().getSpace(x, y).setWeight(weight)
 
         c.close()
         conn.close()
         print("Game Data Read.")
 
     def __updateGameData(self, player, x, y):
+
+        index = 0
+        total = 0
+        success = 0
+        for i in range(len(self._unattackedSquares)):
+            if self._unattackedSquares[i] == player.getBoard().getSpace(x, y):
+                index = i
+                for data in self._gameData:
+                    if self._leftSquares[i] == data['left'] and self._upSquares[i] == data['up'] and self._rightSquares[i] == data['right'] and self._downSquares[i] == data['down']:
+                        print(data['success'])
+                        success = data['success']
+                        total = data['total']
+                        break
+                break
+
         print("Updating Game Data...")
         conn = sql.connect('GameData.db')
         c = conn.cursor()
 
-        c.execute('''SELECT * FROM BOARD WHERE BOARD_X = ? and BOARD_Y = ?''', (x, y))
-        space = c.fetchone()
+        if(player.getBoard().getSpace(x, y).isAttacked() and player.getBoard().getSpace(x, y).isOccupied()):
+            success += 1
+            total += 1
+        elif(player.getBoard().getSpace(x, y).isAttacked() and not player.getBoard().getSpace(x, y).isOccupied()):
+            total += 1
 
-        weight = int(space[2])
+        print(success)
+        print(total)
+        print(self._leftSquares[index] + self._upSquares[index] + self._rightSquares[index] + self._downSquares[index])
 
-        if player.getBoard().getSpace(x, y).isAttacked() and player.getBoard().getSpace(x, y).isOccupied() and weight < 95:
-            weight += 3
+        c.execute('''UPDATE SPACE_EVAL SET 
+                        SPACE_EVAL_SUCCESS = ?, SPACE_EVAL_TOTAL = ?
+                        WHERE SPACE_EVAL_LEFT = ? and SPACE_EVAL_UP = ? and SPACE_EVAL_RIGHT = ? and SPACE_EVAL_DOWN = ?''', 
+                        (success, total, self._leftSquares[index], 
+                        self._upSquares[index], self._rightSquares[index], self._downSquares[index]))
 
-        elif player.getBoard().getSpace(x, y).isAttacked() and not player.getBoard().getSpace(x, y).isOccupied() and weight > 1:
-            weight -= 1
-
-        else: 
-            print("Nothing to be updated")
-            c.close()
-            conn.close()
-            return False
-
-        c.execute('''UPDATE BOARD SET BOARD_WEIGHT = ? WHERE BOARD_X = ? and BOARD_Y = ?''', (weight, x, y))
-
+       
         #saves and closes connections
         conn.commit()
         c.close()
@@ -73,145 +94,129 @@ class AI(Player):
         print("Updated Data")
 
     def __chooseASquare(self, player):
+        self._sameHighestRate = []
+        rate = 0
+        for x in range(len(self._unattackedSquares)):
+            if rate < self._successRates[x]:
+                self._sameHighestRate = []
+                maxi = self._unattackedSquares[x]
+                rate = self._successRates[x]
+                self._sameHighestRate.append(maxi)
 
-        if(not len(self._lastHit) == 0):
+            elif rate == self._successRates[x]:
+                self._sameHighestRate.append(self._unattackedSquares[x])
 
-            self.__allAdjacentSet(player)
+        if len(self._sameHighestRate) == 1:
+            print(self._sameHighestRate[0].getCoords())
+            return self._sameHighestRate[0].getCoords()
 
-            checkVal = rand(0, 100)
-
-            print("CheckVal for Adjacent: ", checkVal)
-            for space in self._adjacent:
-                if space.getWeight() >= checkVal and not space.isAttacked():
-                    return (space.getCoords()[0], space.getCoords()[1])
-
-
-            guess = rand(0, (len(self._adjacent) - 1))
-            print("Hitting square: ", (self._adjacent[guess].getCoords()[0], self._adjacent[guess].getCoords()[1]))
-            return (self._adjacent[guess].getCoords()[0], self._adjacent[guess].getCoords()[1])
-
-        else:
-
-            check = rand(0, 100)
-            print("checkVal: ", check)
-            tempList = []
-
-
-            for x in range(player.getBoard().getRows()):
-                for y in range(player.getBoard().getCols()):
-                    tempList.append(player.getBoard().getSpace(x, y))
-                    #if player.getBoard().getSpace(x, y).getWeight() >= check and not player.getBoard().getSpace(x, y).isAttacked():
-                        #return (x, y)
-            tempList.sort(key=lambda x : x.getWeight(), reverse=True)
-
-            for space in tempList:
-                if space.getWeight() >= check and not space.isAttacked():
-                    return (space.getCoords()[0], space.getCoords()[1])
-
-            x = rand(0, 9)
-            y = rand(0, 9)
-
-            if(not player.getBoard().getSpace(x, y).isAttacked()):
-                return (x, y)
-
-            else:
-                while(player.getBoard().getSpace(x, y).isAttacked()):
-                    x = rand(0, 9)
-                    y = rand(0, 9)
-
-            return (x, y)
-
-    def __updateLastHit(self, player, coords):
-        if(player.getBoard().getSpace(coords[0], coords[1]).isAttacked() and player.getBoard().getSpace(coords[0], coords[1]).isOccupied()):
-            self._lastHit.append(player.getBoard().getSpace(coords[0], coords[1]))
-            print("ADDED SQUARE: ", (coords[0], coords[1]))
-
-            for hit in self._lastHit:
-                print("LastHit: ", hit.getCoords())
-
-            self.__addCurrentHitShips(player, coords)
-
-    def __addCurrentHitShips(self, player, coords):
-
-        for ship in player.getShips():
-            if coords in ship.getSpaces() and not ship in self._currentHitShips:
-                self._currentHitShips.append(ship)
-                print("Hit Ship added: ", ship.getName())
-                break
-
-    def __removeCurrentHitShipsAfterSunk(self, player):
-        for hit in self._lastHit:
-                print("LastHit: ", hit.getCoords())
-
-        #why is second loop out of range or only doing part of lastHit when all other loops transcend the whole list
-        for ship in player.getShips():
-            if ship.isSunk() and ship in self._currentHitShips:
-                print("removing ship: ", ship.getName())
-                print("ship Spaces:" ,ship.getSpaces())
-                for x in range(0, len(self._lastHit)):
-                    print("hitSpace: ", self._lastHit[x].getCoords())
-                    if self._lastHit[x].getCoords() in ship.getSpaces():
-                        print("removing space: ", self._lastHit[x].getCoords())
-                        self._lastHit.remove(self._lastHit[x])
+        elif len(self._sameHighestRate) > 1:
+            index = rand(0, len(self._sameHighestRate) - 1)
+            print(self._sameHighestRate[index].getCoords())
+            return self._sameHighestRate[index].getCoords()
+            
 
 
-                self._currentHitShips.remove(ship)
+    def __setUnAttackedSquares(self, player):
+        #Have a list of unattacked squares to influence attack choice
+        self._unattackedSquares = []
+        for x in range(player.getBoard().getRows()):
+            for y in range(player.getBoard().getCols()):
+                if(not player.getBoard().getSpace(x, y).isAttacked()):
+                    self._unattackedSquares.append(player.getBoard().getSpace(x, y))
 
-    def __allAdjacentSet(self, player):
-        self._adjacent = []
+    def __setSuccessRatesForUnAttackedSquares(self, player):
+        if len(self._unattackedSquares) == 0:
+            return False
 
-        for space in self._lastHit:
+        self._leftSquares = []
+        self._upSquares = []
+        self._rightSquares = []
+        self._downSquares = []
+
+        self._successRates = []
+
+        adjLeft = 'U'
+        adjUp = 'U'
+        adjRight = 'U'
+        adjDown = 'U'
+
+        for space in self._unattackedSquares:
             x = space.getCoords()[0]
             y = space.getCoords()[1]
 
-            #left square
-            if(x > 0 and not player.getBoard().getSpace((x-1), y).isAttacked()):
-                self._adjacent.append(player.getBoard().getSpace((x - 1), y))
+            #check the status of the left
+            leftX = x - 1
+            
+            if(leftX < 0):
+                adjLeft = 'E'
+            elif(player.getBoard().getSpace(leftX, y).isAttacked() and player.getBoard().getSpace(leftX, y).isOccupied()):
+                adjLeft = 'S'
 
-            #right square
-            if(x < 9 and not player.getBoard().getSpace((x+1), y).isAttacked()):
-                self._adjacent.append(player.getBoard().getSpace((x + 1), y))
-
-            #up square
-            if(y > 0 and not player.getBoard().getSpace(x, (y-1)).isAttacked()):
-                self._adjacent.append(player.getBoard().getSpace(x, (y -1)))
-
-            #down square
-            if(y < 9 and not player.getBoard().getSpace(x, (y+1)).isAttacked()):
-                self._adjacent.append(player.getBoard().getSpace(x, (y + 1)))
-
-        self._adjacent.sort(key=lambda x : x.getWeight(), reverse=True)
-
-    def endGameUpdate(self, player):
-
-        print("Updating Game Data...")
-        conn = sql.connect('GameData.db')
-        c = conn.cursor()
-
-        c.execute('''SELECT * FROM BOARD''')
-        spaces = c.fetchall()
-
-        for space in spaces:
-            x = int(space[0])
-            y = int(space[1])
-            weight = int(space[2])
-            if(player.getBoard().getSpace(x, y).isAttacked()): continue
-
-            if(player.getBoard().getSpace(x, y).isOccupied() and weight < 98):
-                weight += 1
-                c.execute('''UPDATE BOARD SET BOARD_WEIGHT = ? WHERE BOARD_X = ? and BOARD_Y = ?''', (weight, x, y))
-                print("Updated Data: ", (x, y))
-            elif(not player.getBoard().getSpace(x, y).isOccupied() and weight > 1):
-                weight -= 1
-                c.execute('''UPDATE BOARD SET BOARD_WEIGHT = ? WHERE BOARD_X = ? and BOARD_Y = ?''', (weight, x, y))
-                print("Updated Data: ", (x, y))
+            elif(player.getBoard().getSpace(leftX, y).isAttacked() and not player.getBoard().getSpace(leftX, y).isOccupied()):
+                adjLeft = 'E'
             else:
-                print("Nothing to be updated: ", (x, y))
-                continue
+                adjLeft = 'U'
 
-        #saves and closes connections
-        conn.commit()
-        c.close()
-        conn.close()
+            self._leftSquares.append(adjLeft)           
 
+            #check the status of the up
+            upY = y - 1
+            
+            if(upY < 0):
+                adjUp = 'E'
+            elif(player.getBoard().getSpace(x, upY).isAttacked() and player.getBoard().getSpace(x, upY).isOccupied()):
+                adjUp = 'S'
 
+            elif(player.getBoard().getSpace(x, upY).isAttacked() and not player.getBoard().getSpace(x, upY).isOccupied()):
+                adjUp = 'E'
+            else:
+                adjUp = 'U'
+
+            self._upSquares.append(adjUp) 
+
+            #check the status of the right
+            rightX = x + 1
+            if(rightX > 9):
+                adjRight = 'E'
+            elif(player.getBoard().getSpace(rightX, y).isAttacked() and player.getBoard().getSpace(rightX, y).isOccupied()):
+                adjRight = 'S'
+
+            elif(player.getBoard().getSpace(rightX, y).isAttacked() and not player.getBoard().getSpace(rightX, y).isOccupied()):
+                adjRight = 'E'
+            else:
+                adjRight = 'U'
+
+            self._rightSquares.append(adjRight)  
+
+            #check the status of the Down
+            downY = y + 1
+            if(downY > 9):
+                adjDown = 'E'
+            elif(player.getBoard().getSpace(x, downY).isAttacked() and player.getBoard().getSpace(x, downY).isOccupied()):
+                adjDown = 'S'
+
+            elif(player.getBoard().getSpace(x, downY).isAttacked() and not player.getBoard().getSpace(x, downY).isOccupied()):
+                adjDown = 'E'
+            else:
+                adjDown = 'U'
+
+            self._downSquares.append(adjDown)
+        self.__pullSuccessRateFromGameData()
+
+    def __pullSuccessRateFromGameData(self):
+        for x in range(0, 100):
+            self._successRates.append(0)
+
+        for data in self._gameData:
+            for x in range(len(self._unattackedSquares)):
+                if(data['left'] == self._leftSquares[x] and data['right'] == self._rightSquares[x] and data['up'] == self._upSquares[x] and data['down'] == self._downSquares[x]):
+                        if(not data['total'] == 0):
+                            rate = int((data['success'] / data['total']) * 100)
+                        else:
+                            rate = 0
+                        
+                        self._successRates[x] = rate
+
+        print(self._successRates)
+   
