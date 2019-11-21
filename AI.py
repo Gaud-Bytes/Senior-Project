@@ -16,6 +16,7 @@ class AI(Player):
         self._downSquares = []
         self._successRates = []
         self._gameData = []
+        self._spaceData = []
         self._sameHighestRate = []
        # self._lastHit = []
        # self._adjacent = []
@@ -45,6 +46,11 @@ class AI(Player):
         for row in rows:
             self._gameData.append({'left' : row[1], 'up' : row[2], 'right' : row[3], 'down' : row[4], 'success' : row[5], 'total' : row[6]})
 
+        c.execute('''SELECT * FROM BOARD''')
+        s = c.fetchall()
+        self._spaceData = []
+        for row in s:
+            self._spaceData.append({'x' : row[0], 'y': row[1], 'success': row[2], 'total': row[3]})
 
         c.close()
         conn.close()
@@ -53,6 +59,8 @@ class AI(Player):
     def __updateGameData(self, player, x, y):
 
         index = 0
+        totalE = 0
+        successE = 0
         total = 0
         success = 0
         for i in range(len(self._unattackedSquares)):
@@ -61,32 +69,47 @@ class AI(Player):
                 for data in self._gameData:
                     if self._leftSquares[i] == data['left'] and self._upSquares[i] == data['up'] and self._rightSquares[i] == data['right'] and self._downSquares[i] == data['down']:
                         print(data['success'])
+                        successE = data['success']
+                        totalE= data['total']
+                        break
+
+                for data in self._spaceData:
+                    if data['x'] == x and data['y'] == y:
+                        print(data['success'])
                         success = data['success']
                         total = data['total']
                         break
                 break
+
+        
 
         print("Updating Game Data...")
         conn = sql.connect('GameData.db')
         c = conn.cursor()
 
         if(player.getBoard().getSpace(x, y).isAttacked() and player.getBoard().getSpace(x, y).isOccupied()):
+            successE += 1
+            totalE += 1
             success += 1
             total += 1
         elif(player.getBoard().getSpace(x, y).isAttacked() and not player.getBoard().getSpace(x, y).isOccupied()):
+            totalE += 1
             total += 1
 
-        print(success)
-        print(total)
+        print(successE)
+        print(totalE)
         print(self._leftSquares[index] + self._upSquares[index] + self._rightSquares[index] + self._downSquares[index])
 
         c.execute('''UPDATE SPACE_EVAL SET 
                         SPACE_EVAL_SUCCESS = ?, SPACE_EVAL_TOTAL = ?
                         WHERE SPACE_EVAL_LEFT = ? and SPACE_EVAL_UP = ? and SPACE_EVAL_RIGHT = ? and SPACE_EVAL_DOWN = ?''', 
-                        (success, total, self._leftSquares[index], 
+                        (successE, totalE, self._leftSquares[index], 
                         self._upSquares[index], self._rightSquares[index], self._downSquares[index]))
 
-       
+        print(success, total, x, y)
+        c.execute('''UPDATE BOARD SET BOARD_SUCCESS = ?, BOARD_TOTAL = ?
+                     WHERE BOARD_X = ? and BOARD_Y = ?''', (success, total, x, y))
+
         #saves and closes connections
         conn.commit()
         c.close()
@@ -212,11 +235,21 @@ class AI(Player):
             for x in range(len(self._unattackedSquares)):
                 if(data['left'] == self._leftSquares[x] and data['right'] == self._rightSquares[x] and data['up'] == self._upSquares[x] and data['down'] == self._downSquares[x]):
                         if(not data['total'] == 0):
-                            rate = int((data['success'] / data['total']) * 100)
+                            rate = float((data['success'] / data['total']) * 100)
                         else:
                             rate = 0
                         
                         self._successRates[x] = rate
+
+        for data in self._spaceData:
+            for x in range(len(self._unattackedSquares)):
+                if(data['x'] == self._unattackedSquares[x].getCoords()[0] and data['y'] == self._unattackedSquares[x].getCoords()[1]):
+                    if(not data['total'] == 0):
+                        modifier = float((data['success'] / data['total']) * 100)
+                    else:
+                        modifier = 0
+
+                    self._successRates[x] += modifier
 
         print(self._successRates)
    
