@@ -13,7 +13,6 @@ class DumbAI(Player):
         while(player.getBoard().getSpace(coords[0], coords[1]).isAttacked()):
             coords = (rand(0,9), rand(0,9))
 
-        print("DUMB AI ATTACKING : {}".format(coords))
         self._strategy.attack(player, coords)
 
     def placeShip(self, ship):

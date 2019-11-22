@@ -43,10 +43,8 @@ class Model:
 
         for ship in self.getPlayerTwoShips():
            if(not ship.isSunk() and self.getPlayerTwo().allSpacesAttacked(ship)):
-                print(ship.getName(), " is Sunk")
                 ship.sinkShip()
 
         for ship in self.getPlayerOneShips():
             if(not ship.isSunk() and self.getPlayerOne().allSpacesAttacked(ship)):
-                print(ship.getName(), " is Sunk")
                 ship.sinkShip()

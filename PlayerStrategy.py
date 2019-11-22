@@ -58,7 +58,6 @@ class AIStrategy(PlayerStrategy):
 
     def attack(self, player, coords):
         player.getBoard().getSpace(coords[0], coords[1]).attack()
-        print("SPACE ATTACK: ", coords, player.getBoard().getSpace(coords[0], coords[1]).isAttacked())
         
     def placeShip(self, player, ship):
 
@@ -67,8 +66,6 @@ class AIStrategy(PlayerStrategy):
             alignment = rand(0, 1)
             direction = rand(0, 1)
             end = [0, 0]
-
-            #print("start: " , start, " align: ", alignment, " Dir: " ,direction)
 
             end[alignment] = start[alignment]
 
@@ -98,7 +95,6 @@ class AIStrategy(PlayerStrategy):
                     end[0] = start[0] + (ship.getSize() - 1)
 
             ship.setStart(start)
-           # print("end: ", tuple(end))
             ship.setEnd(tuple(end))
 
         if(not self._isShipConflict(player, ship)):        

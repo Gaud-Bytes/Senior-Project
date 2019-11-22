@@ -36,7 +36,6 @@ class AI(Player):
         self._strategy.placeShip(self, ship)
 
     def __readGameData(self, player):
-        print("Reading Game Data...")
         conn = sql.connect('GameData.db')
         c = conn.cursor()
 
@@ -54,7 +53,6 @@ class AI(Player):
 
         c.close()
         conn.close()
-        print("Game Data Read.")
 
     def __updateGameData(self, player, x, y):
 
@@ -68,22 +66,17 @@ class AI(Player):
                 index = i
                 for data in self._gameData:
                     if self._leftSquares[i] == data['left'] and self._upSquares[i] == data['up'] and self._rightSquares[i] == data['right'] and self._downSquares[i] == data['down']:
-                        print(data['success'])
                         successE = data['success']
                         totalE= data['total']
                         break
 
                 for data in self._spaceData:
                     if data['x'] == x and data['y'] == y:
-                        print(data['success'])
                         success = data['success']
                         total = data['total']
                         break
                 break
 
-        
-
-        print("Updating Game Data...")
         conn = sql.connect('GameData.db')
         c = conn.cursor()
 
@@ -96,17 +89,12 @@ class AI(Player):
             totalE += 1
             total += 1
 
-        print(successE)
-        print(totalE)
-        print(self._leftSquares[index] + self._upSquares[index] + self._rightSquares[index] + self._downSquares[index])
-
         c.execute('''UPDATE SPACE_EVAL SET 
                         SPACE_EVAL_SUCCESS = ?, SPACE_EVAL_TOTAL = ?
                         WHERE SPACE_EVAL_LEFT = ? and SPACE_EVAL_UP = ? and SPACE_EVAL_RIGHT = ? and SPACE_EVAL_DOWN = ?''', 
                         (successE, totalE, self._leftSquares[index], 
                         self._upSquares[index], self._rightSquares[index], self._downSquares[index]))
 
-        print(success, total, x, y)
         c.execute('''UPDATE BOARD SET BOARD_SUCCESS = ?, BOARD_TOTAL = ?
                      WHERE BOARD_X = ? and BOARD_Y = ?''', (success, total, x, y))
 
@@ -114,7 +102,6 @@ class AI(Player):
         conn.commit()
         c.close()
         conn.close()
-        print("Updated Data")
 
     def __chooseASquare(self, player):
         self._sameHighestRate = []
@@ -130,12 +117,10 @@ class AI(Player):
                 self._sameHighestRate.append(self._unattackedSquares[x])
 
         if len(self._sameHighestRate) == 1:
-            print(self._sameHighestRate[0].getCoords())
             return self._sameHighestRate[0].getCoords()
 
         elif len(self._sameHighestRate) > 1:
             index = rand(0, len(self._sameHighestRate) - 1)
-            print(self._sameHighestRate[index].getCoords())
             return self._sameHighestRate[index].getCoords()
             
 
@@ -251,6 +236,4 @@ class AI(Player):
                         modifier = 0
 
                     self._successRates[x] += modifier
-
-        print(self._successRates)
    
