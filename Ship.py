@@ -22,22 +22,18 @@ class Ship:
 
         if(isinstance(startSpace, tuple) and len(startSpace) == 2):
             if(isinstance(startSpace[0], int) and isinstance(startSpace[1], int)):
-                print("setting Start Space...")
                 self._startSpace = startSpace
                 return True
 
             else:
-                print("Invalid X or Y Type")
                 return False
 
         else:
-            print("Invalid Coords Type")
             return False
 
     def setEnd(self, endSpace):
 
         if(self._startSpace == None):
-            print("No Start Space Set")
             return False
         
         if(isinstance(endSpace, tuple) and len(endSpace) == 2):
@@ -47,7 +43,6 @@ class Ship:
                         or (endSpace[0] == (self._startSpace[0] - (self._shipSize - 1)))) 
                         and (self._startSpace[1] == endSpace[1])):
                         
-                        print("set end space...")
                         self._endSpace = endSpace
                         self.__setSquareCoords()
                         return True
@@ -56,24 +51,19 @@ class Ship:
                         or (endSpace[1] == self._startSpace[1] - (self._shipSize - 1))) 
                         and (self._startSpace[0] == endSpace[0])):
 
-                        print("setting end space...")
                         self._endSpace = endSpace
                         self.__setSquareCoords()
                         return True
                     else:
-                        print("Bad Endpoint")
                         return False
 
                 else:
-                    print("Invalid Board Option")
                     return False
 
             else:
-                print("Invalid X or Y Type")
                 return False
 
         else:
-            print("Invalid Cooords Type")
             return False
 
    
