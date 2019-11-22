@@ -6,8 +6,8 @@ from random import randint as rand
 
 class AI(Player):
 
-    def __init__(self, strategy : AIStrategy()):
-        super(AI, self).__init__(strategy)
+    def __init__(self):
+        super(AI, self).__init__(AIStrategy())
         #Used in parrallel
         self._unattackedSquares = []
         self._leftSquares = []
@@ -245,7 +245,8 @@ class AI(Player):
             for x in range(len(self._unattackedSquares)):
                 if(data['x'] == self._unattackedSquares[x].getCoords()[0] and data['y'] == self._unattackedSquares[x].getCoords()[1]):
                     if(not data['total'] == 0):
-                        modifier = float((data['success'] / data['total']) * 100)
+                        # * 10 so it is less influential than the situation , meant to just slightly improve odds.
+                        modifier = float((data['success'] / data['total']) * 10)
                     else:
                         modifier = 0
 

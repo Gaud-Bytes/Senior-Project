@@ -4,8 +4,8 @@ from PlayerStrategy import *
 
 class HumanPlayer(Player):
 
-    def __init__(self, strategy : HumanStrategy()):
-        super(HumanPlayer, self).__init__(strategy)
+    def __init__(self):
+        super(HumanPlayer, self).__init__(HumanStrategy())
 
     def attack(self, player, coords):
         self._strategy.attack(player, coords)

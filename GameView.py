@@ -38,13 +38,13 @@ class GameView:
         for x in range(len(self._buttons) - 3):
             self._buttons[x].configure(width=10, bg='#ADD8E6', fg="#000000", state=NORMAL)
 
-            if(self._model.getActiveShip() == self._model.getPlayerShips()[x]):
+            if(self._model.getActiveShip() == self._model.getPlayerOneShips()[x]):
                 self._buttons[x].configure(width=10, bg='#37FDFC', fg="#000000", state=DISABLED)
 
-            if(self._model.getPlayerShips()[x].isPlaced()):
+            if(self._model.getPlayerOneShips()[x].isPlaced()):
                     self._buttons[x].configure(width=10, bg='#ADD8E6', fg="#000000", state=DISABLED)
 
-            if(self._model.getPlayerShips()[x].isSunk()):
+            if(self._model.getPlayerOneShips()[x].isSunk()):
                 self._buttons[x].configure(width=10, bg='#FF0000', fg="#000000", state=DISABLED)
 
         #quitButton
@@ -70,45 +70,45 @@ class GameView:
 
         #game over label
 
-        if(self._model.allPlayerShipsSunk(self._model.getPlayer()) and self._model.isGameOver()):
+        if(self._model.allPlayerShipsSunk(self._model.getPlayerOne()) and self._model.isGameOver()):
             self._shipList[1].configure(width=20, font=("Helvetica", 14), fg="#B22222", bg='#FFFFFF', text="Game Over: You Lose")
-        elif(self._model.allPlayerShipsSunk(self._model.getAIPlayer()) and self._model.isGameOver()):
+        elif(self._model.allPlayerShipsSunk(self._model.getPlayerTwo()) and self._model.isGameOver()):
             self._shipList[1].configure(width=20, font=("Helvetica", 14), fg="#228B22", bg='#FFFFFF', text="Game Over: You Win")
 
         #each ships Label
         for x in range(2, len(self._shipList)):
             self._shipList[x].configure(width=10, font=("Helvetica bold", 12), bg='#FFFFFF')
 
-            if(self._model.getAIShips()[x-2].isSunk()):
+            if(self._model.getPlayerTwoShips()[x-2].isSunk()):
                 self._shipList[x].configure(bg="#B22222", fg='#FFFFFF')
 
     def displayBoards(self):
         for i in range(len(self._boardSpaces)):
             for j in range(len(self._boardSpaces[i])):
                 if self._model.isPlayerOneTurn() and self._model.isAttackPhase():
-                    if(self._model.getAIBoard().getSpace(i,j).isAttacked() and self._model.getAIBoard().getSpace(i,j).isOccupied()):
+                    if(self._model.getPlayerTwoBoard().getSpace(i,j).isAttacked() and self._model.getPlayerTwoBoard().getSpace(i,j).isOccupied()):
                         self._w.itemconfig(self._boardSpaces[i][j], fill="#B22222", width=1)
-                    elif(self._model.getAIBoard().getSpace(i,j).isAttacked() and not self._model.getAIBoard().getSpace(i,j).isOccupied()):
+                    elif(self._model.getPlayerTwoBoard().getSpace(i,j).isAttacked() and not self._model.getPlayerTwoBoard().getSpace(i,j).isOccupied()):
                         self._w.itemconfig(self._boardSpaces[i][j], fill="#FFFFFF", width=1)
                     else:
                         self._w.itemconfig(self._boardSpaces[i][j], fill="#228B22", width=1)
 
-                    if(self._model.getAIBoard().getSpace(i,j).isSelected()):
+                    if(self._model.getPlayerTwoBoard().getSpace(i,j).isSelected()):
                         self._w.itemconfig(self._boardSpaces[i][j], outline="#FF6347", width=3)
                     else:
                         self._w.itemconfig(self._boardSpaces[i][j], outline="#000000", width=1)
 
                 else:
-                    if(self._model.getPlayerBoard().getSpace(i,j).isAttacked() and self._model.getPlayerBoard().getSpace(i,j).isOccupied()):
+                    if(self._model.getPlayerOneBoard().getSpace(i,j).isAttacked() and self._model.getPlayerOneBoard().getSpace(i,j).isOccupied()):
                         self._w.itemconfig(self._boardSpaces[i][j], fill="#B22222", width=1)
-                    elif(self._model.getPlayerBoard().getSpace(i,j).isAttacked() and not self._model.getPlayerBoard().getSpace(i,j).isOccupied()):
+                    elif(self._model.getPlayerOneBoard().getSpace(i,j).isAttacked() and not self._model.getPlayerOneBoard().getSpace(i,j).isOccupied()):
                         self._w.itemconfig(self._boardSpaces[i][j], fill="#FFFFFF", width=1)
-                    elif(self._model.getPlayerBoard().getSpace(i, j).isOccupied() and not self._model.getPlayerBoard().getSpace(i,j).isAttacked()):
+                    elif(self._model.getPlayerOneBoard().getSpace(i, j).isOccupied() and not self._model.getPlayerOneBoard().getSpace(i,j).isAttacked()):
                         self._w.itemconfig(self._boardSpaces[i][j], fill="#AAA9AD", width=1)
                     else:
                         self._w.itemconfig(self._boardSpaces[i][j],fill="#17A3F1", width=1)
 
-                    if(self._model.getPlayerBoard().getSpace(i,j).isSelected()):
+                    if(self._model.getPlayerOneBoard().getSpace(i,j).isSelected()):
                         self._w.itemconfig(self._boardSpaces[i][j], outline="#FF6347", width=3)
                     else:
                         self._w.itemconfig(self._boardSpaces[i][j], outline="#000000", width=1)
@@ -118,17 +118,17 @@ class GameView:
 
         buttonX = 150
 
-        for x in range(len(self._model.getPlayerShips())):
+        for x in range(len(self._model.getPlayerOneShips())):
             buttonX += 100
 
             if(x == 0):
-                shipButtonLabel = self._model.getPlayerShips()[x].getName() + "(5)"
+                shipButtonLabel = self._model.getPlayerOneShips()[x].getName() + "(5)"
             elif(x == 1):
-                shipButtonLabel = self._model.getPlayerShips()[x].getName() + "(4)"
+                shipButtonLabel = self._model.getPlayerOneShips()[x].getName() + "(4)"
             elif(x == 2 or x == 3):
-                shipButtonLabel = self._model.getPlayerShips()[x].getName() + "(3)"
+                shipButtonLabel = self._model.getPlayerOneShips()[x].getName() + "(3)"
             elif(x == 4):
-                shipButtonLabel = self._model.getPlayerShips()[x].getName() + "(2)"
+                shipButtonLabel = self._model.getPlayerOneShips()[x].getName() + "(2)"
 
             shipButton = Button(self._w, text=shipButtonLabel, anchor=W)
             shipButton_window = self._w.create_window(buttonX, 500, anchor=S, window=shipButton)
@@ -161,9 +161,9 @@ class GameView:
         self._shipList.append(title)
         self._shipList.append(gameOverLabel)
 
-        for x in range(len(self._model.getAIShips())):
+        for x in range(len(self._model.getPlayerTwoShips())):
             labelX += 100
-            shipLabel = Label(self._w, text=self._model.getAIShips()[x].getName(), anchor=W, bg='#AAA9AD' )
+            shipLabel = Label(self._w, text=self._model.getPlayerTwoShips()[x].getName(), anchor=W, bg='#AAA9AD' )
             shipLabel.configure(width=10, font=("Helvetica bold", 12))
             shipLabel_window = self._w.create_window(labelX, 550, anchor=S, window=shipLabel)
             self._shipList.append(shipLabel)
@@ -176,17 +176,17 @@ class GameView:
         xDiff = x2 - x1 + 1
 
         self._boardXmin, self._boardYmin = (x1, y1)
-        self._boardXmax, self._boardYmax = (xDiff * self._model.getPlayerBoard().getRows() + self._boardXmin, yDiff * self._model.getPlayerBoard().getCols() + self._boardYmin )
+        self._boardXmax, self._boardYmax = (xDiff * self._model.getPlayerOneBoard().getRows() + self._boardXmin, yDiff * self._model.getPlayerOneBoard().getCols() + self._boardYmin )
         
-        for x in range(self._model.getPlayerBoard().getRows()):
+        for x in range(self._model.getPlayerOneBoard().getRows()):
             self._boardSpaces.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 
         space = NONE
-        for i in range(self._model.getPlayerBoard().getRows()):
+        for i in range(self._model.getPlayerOneBoard().getRows()):
             y1 = 10
             y2 = 54
             yDiff = y2 - y1 + 1
-            for j in range(self._model.getPlayerBoard().getCols()):
+            for j in range(self._model.getPlayerOneBoard().getCols()):
                 self._boardSpaces[i][j] = self._w.create_rectangle(x1, y1, x2, y2, fill="#0BB8FF", width=1)
                  
 

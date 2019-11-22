@@ -44,15 +44,15 @@ class GameController:
         xCoord, yCoord = (-1, -1)
         yDiff = y2 - y1
         xDiff = x2 - x1
-        yMax = yDiff * self._model.getPlayerBoard().getRows() + y2
-        xMax = xDiff * self._model.getPlayerBoard().getCols() + x2
+        yMax = yDiff * self._model.getPlayerOneBoard().getRows() + y2
+        xMax = xDiff * self._model.getPlayerOneBoard().getCols() + x2
 
         if(xPix > x1 and xPix < xMax) and (yPix > y1 and yPix < yMax ):
-            for i in range(self._model.getPlayerBoard().getRows()):
+            for i in range(self._model.getPlayerOneBoard().getRows()):
                 y1, y2 = (10, 55)
                 if(xPix > x1 and xPix < x2):
                         xCoord = i
-                for j in range(self._model.getPlayerBoard().getCols()):
+                for j in range(self._model.getPlayerOneBoard().getCols()):
                     if (yPix > y1 and yPix < y2):
                         yCoord = j
                     
@@ -71,9 +71,9 @@ class GameController:
     
     def __nextPhase(self):
 
-        self.__checkIfShipsNeedToBeSunk()
+        self._model.checkIfShipsNeedToBeSunk()
 
-        if(not self._model.isGameOver() and self._model.allPlayerShipsSunk(self._model.getAIPlayer()) or self._model.allPlayerShipsSunk(self._model.getPlayer())):
+        if(not self._model.isGameOver() and self._model.allPlayerShipsSunk(self._model.getPlayerTwo()) or self._model.allPlayerShipsSunk(self._model.getPlayerOne())):
             self._model.endGame()
 
         if(self._model.isShipPlacementPhaseReadyToEnd()):
@@ -104,12 +104,12 @@ class GameController:
 
     def __confirmAttack(self):
         if(self._model.isAttackPhase() and self._model.isPlayerOneTurn):
-            self._model.getAIBoard().getSpace(
+            self._model.getPlayerTwoBoard().getSpace(
                 self._model.getSelectedSpace(0)[0],
                 self._model.getSelectedSpace(0)[1]
             ).attack()
 
-            self._model.getAIBoard().getSpace(
+            self._model.getPlayerTwoBoard().getSpace(
                 self._model.getSelectedSpace(0)[0],
                 self._model.getSelectedSpace(0)[1]
             ).deselect()
@@ -126,7 +126,7 @@ class GameController:
             return False
 
     def __activeShip(self, index):
-        aShip = self._model.getPlayerShips()[index]
+        aShip = self._model.getPlayerOneShips()[index]
         self._model.setActiveShip(aShip, index)
         print("Active Ship: " + aShip.getName())
         self.__updateView()
@@ -140,28 +140,28 @@ class GameController:
             print(shipIndex)
 
             
-            self._model.getPlayerBoard().getSpace(coords[0], coords[1]).toggleSelect()
+            self._model.getPlayerOneBoard().getSpace(coords[0], coords[1]).toggleSelect()
 
             print(self._model.getSelectedLength())
-            if(self._model.getPlayerBoard().getSpace(coords[0], coords[1]).isSelected()):
+            if(self._model.getPlayerOneBoard().getSpace(coords[0], coords[1]).isSelected()):
 
                 self._model.addSelectedSpace(coords)
 
                 if(self._model.getSelectedLength() == 1):
-                    self._model.getPlayerShips()[shipIndex].setStart(coords)
+                    self._model.getPlayerOneShips()[shipIndex].setStart(coords)
 
                 elif(self._model.getSelectedLength() == 2):
-                    self._model.getPlayerShips()[shipIndex].setEnd(coords)
+                    self._model.getPlayerOneShips()[shipIndex].setEnd(coords)
 
-                    self._model.getPlayer().placeShip(self._model.getPlayerShips()[shipIndex])
+                    self._model.getPlayerOne().placeShip(self._model.getPlayerOneShips()[shipIndex])
                     self._model.setActiveShip(None, None)
 
-                    self._model.getPlayerBoard().getSpace(
+                    self._model.getPlayerOneBoard().getSpace(
                         self._model.getSelectedSpace(0)[0],
                         self._model.getSelectedSpace(0)[1]
                     ).deselect()
 
-                    self._model.getPlayerBoard().getSpace(
+                    self._model.getPlayerOneBoard().getSpace(
                         self._model.getSelectedSpace(1)[0],
                         self._model.getSelectedSpace(1)[1]
                     ).deselect()
@@ -170,7 +170,7 @@ class GameController:
             else:
                 self._model.clearAllSelected()
 
-            if(self._model.getPlayer().areAllShipsPlaced()):
+            if(self._model.getPlayerOne().areAllShipsPlaced()):
                 self._model.setShipPlacementPhaseReadyToEnd()
                 
 
@@ -187,13 +187,13 @@ class GameController:
         else:
 
             print(coords)
-            if(self._model.getAIBoard().getSpace(coords[0], coords[1]).isAttacked()):
+            if(self._model.getPlayerTwoBoard().getSpace(coords[0], coords[1]).isAttacked()):
                 print("cannot select and already attacked square")
                 return False
             
-            self._model.getAIBoard().getSpace(coords[0], coords[1]).toggleSelect()
+            self._model.getPlayerTwoBoard().getSpace(coords[0], coords[1]).toggleSelect()
 
-            if(self._model.getAIBoard().getSpace(coords[0], coords[1]).isSelected()):
+            if(self._model.getPlayerTwoBoard().getSpace(coords[0], coords[1]).isSelected()):
 
                 if(self._model.getSelectedLength() == 0):
                     self._model.addSelectedSpace(coords)
@@ -202,7 +202,7 @@ class GameController:
 
                 elif(self._model.getSelectedLength() == 1):
                     
-                    self._model.getAIBoard().getSpace(
+                    self._model.getPlayerTwoBoard().getSpace(
                         self._model.getSelectedSpace(0)[0],
                         self._model.getSelectedSpace(0)[1]
                     ).deselect()
@@ -230,7 +230,7 @@ class GameController:
         #button 5-7 quit, nextPhase and attack
 
         #bind events to each ship button 
-        for x in range(len(self._model.getPlayerShips())):
+        for x in range(len(self._model.getPlayerOneShips())):
             self._view.getButtons()[x].config(command=lambda y=x: self.__activeShip(y))
          
         #bind event to quit button
@@ -247,27 +247,16 @@ class GameController:
 
     #Just needed to mock AI placing ships
     def __aiInitBoard(self):
-        for ship in self._model.getAIShips():
-            self._model.getAIPlayer().placeShip(ship)
+        for ship in self._model.getPlayerTwoShips():
+            self._model.getPlayerTwo().placeShip(ship)
 
     def __aiTurn(self):
 
         #Logic in attack controlls AIs learning.
         if(self._model.isAttackPhase() and self._model.isPlayerTwoTurn()):
-            self._model.getAIPlayer().attack(self._model.getPlayer())
+            self._model.getPlayerTwo().attack(self._model.getPlayerOne())
             self._model.setAttackPhaseReadyToEnd()
 
-    def __checkIfShipsNeedToBeSunk(self):
-
-        for ship in self._model.getAIShips():
-           if(not ship.isSunk() and self._model.getAIPlayer().allSpacesAttacked(ship)):
-                print(ship.getName(), " is Sunk")
-                ship.sinkShip()
-
-        for ship in self._model.getPlayerShips():
-            if(not ship.isSunk() and self._model.getPlayer().allSpacesAttacked(ship)):
-                print(ship.getName(), " is Sunk")
-                ship.sinkShip()
 
 
         

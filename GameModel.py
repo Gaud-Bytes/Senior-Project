@@ -1,14 +1,14 @@
 from Player import Player
+from Model import Model
 from Ship import Ship
 from HumanPlayer import HumanPlayer as hp
 from AI import AI
 from PlayerStrategy import *
 
-class GameModel:
+class GameModel(Model):
     
     def __init__(self):
-        self._hPlayer, self._ai = (hp(HumanStrategy()), AI(AIStrategy()))
-        self._gameEnd = False
+        super(GameModel, self).__init__(hp(), AI())
         self._shipPlacementPhase = True
         self._attackPhase = False
         self._firstPlayerTurn = True
@@ -19,18 +19,6 @@ class GameModel:
         self._activeShip = None
         self._activeShipIndex = None
         self._selectedSpaces = []
-
-    def getPlayerBoard(self):
-        return self._hPlayer.getBoard()
-
-    def getAIBoard(self):
-        return self._ai.getBoard()
-
-    def getPlayerShips(self):
-        return self._hPlayer.getShips()
-
-    def getAIShips(self):
-        return self._ai.getShips()
 
     def setPlayerTurn(self, num):
         if(isinstance(num, int) and num == 1):
@@ -60,9 +48,6 @@ class GameModel:
     def isAttackPhase(self):
         return self._attackPhase
 
-    def isGameOver(self):
-        return self._gameEnd
-
     def setActiveShip(self, ship, index):
         self._activeShip = ship
         self._activeShipIndex = index
@@ -72,12 +57,6 @@ class GameModel:
 
     def getActiveShipIndex(self):
         return self._activeShipIndex
-
-    def getPlayer(self):
-        return self._hPlayer
-
-    def getAIPlayer(self):
-        return self._ai
 
     def getSelectedLength(self):
         return len(self._selectedSpaces)
@@ -130,9 +109,4 @@ class GameModel:
     def isASpaceSelected(self):
         return self._spaceSelected
 
-    def allPlayerShipsSunk(self, player):
-        if player.areAllShipsSunk():
-            return True
-
-        return False
 
