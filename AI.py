@@ -220,7 +220,7 @@ class AI(Player):
             for x in range(len(self._unattackedSquares)):
                 if(data['left'] == self._leftSquares[x] and data['right'] == self._rightSquares[x] and data['up'] == self._upSquares[x] and data['down'] == self._downSquares[x]):
                         if(not data['total'] == 0):
-                            rate = float((data['success'] / data['total']) * 100)
+                            rate = float((data['success'] / data['total']))
                         else:
                             rate = 0
                         
@@ -231,7 +231,7 @@ class AI(Player):
                 if(data['x'] == self._unattackedSquares[x].getCoords()[0] and data['y'] == self._unattackedSquares[x].getCoords()[1]):
                     if(not data['total'] == 0):
                         # * 10 so it is less influential than the situation , meant to just slightly improve odds.
-                        modifier = float((data['success'] / data['total']) * 10)
+                        modifier = float((data['success'] / data['total']))
                     else:
                         modifier = 0
 

@@ -2,18 +2,22 @@ from Model import Model
 from AI import AI
 from DumbAI import DumbAI as dumb
 import createDB
-
 #Player one is smart AI and playerTwo is Dumb AI
 class TrainAI:
 
     def __init__(self):
-        createDB.initDB()
         self._model = Model(AI(), dumb())
         self._smartAIwins = 0
         self._smartAIlosses = 0
         self.gameLoop()
 
     def gameLoop(self):
+        val = input("0 for fresh start , 1 to continue with current data: ")
+
+        if val == 0:
+            createDB.initDB()
+
+               
         print("AI Trainer")
         print("===========")
         num_of_games = input("How games to play: ")
