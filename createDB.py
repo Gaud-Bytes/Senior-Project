@@ -65,6 +65,8 @@ def initDB():
     #closes connection
     c.close()
     conn.close()
+val = input("0 to sourceDB, 1 to quit: ")
 
-initDB()
+if val == 0:
+    initDB()
 

@@ -1,7 +1,7 @@
 from Model import Model
 from AI import AI
 from DumbAI import DumbAI as dumb
-import createDB
+from createDB import initDB
 #Player one is smart AI and playerTwo is Dumb AI
 class TrainAI:
 
@@ -12,11 +12,6 @@ class TrainAI:
         self.gameLoop()
 
     def gameLoop(self):
-        val = input("0 for fresh start , 1 to continue with current data: ")
-
-        if val == 0:
-            createDB.initDB()
-
                
         print("AI Trainer")
         print("===========")
