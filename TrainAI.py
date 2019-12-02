@@ -52,7 +52,7 @@ class TrainAI:
                     self._model.getPlayerTwo().attack(self._model.getPlayerOne())
                     self._model.checkIfShipsNeedToBeSunk()
 
-            print("{0}\r".format("Games Played " + str(x + 1)), end = " ")
+            print("{0}\r".format("Games Played " + str(x + 1)), end = "")
 
         print("SmartAI won: {}".format(self._smartAIwins))
         print("SmartAI losses: {}".format(self._smartAIlosses))
